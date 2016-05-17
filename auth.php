@@ -11,7 +11,7 @@ function auth($login, $passwd)
       $sql = "
       SELECT COUNT(*)
       FROM `camagru`.`users`
-      WHERE login = :login AND passwd = :hash AND activated = TRUE;
+      WHERE login = :login AND passwd = :hash AND activated = TRUE";
 
       $query = $db->prepare($sql);
       $query->bindValue(':login', $login, PDO::PARAM_STR);

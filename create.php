@@ -24,7 +24,7 @@ include './functions.php';
             ?><script>setTimeout(function() {window.location.href = "./index.php";}, 3000);</script><?php
           } else {
             $hash = hash("whirlpool", $_POST['passwd']);
-            $activation_id = md5(microtime(true);
+            $activation_id = md5(microtime(true));
             $sql = "
             INSERT INTO
                 `camagru`.`users`
