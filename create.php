@@ -1,6 +1,7 @@
 <?php
 
 include './config/database.php';
+include './functions.php';
 
   if ($_POST['submit'] === "OK") {
     if (!empty($_POST['login']) && !empty($_POST['passwd'])) {
@@ -23,23 +24,18 @@ include './config/database.php';
             ?><script>setTimeout(function() {window.location.href = "./index.php";}, 3000);</script><?php
           } else {
             $hash = hash("whirlpool", $_POST['passwd']);
+            $activation_id = md5(microtime(true);
             $sql = "
             INSERT INTO
                 `camagru`.`users`
-                (`login`, `passwd`)
+                (`login`, `passwd`, `activated`, `activation_id`)
             VALUES
-                (:login, :hash)";
+                (:login, :hash, FALSE, :activation_id)";
             $query = $db->prepare($sql);
             $query->bindParam(':login', $_POST['login'], PDO::PARAM_STR);
             $query->bindParam(':hash', $hash, PDO::PARAM_STR);
-
-             $to      = 'eliot.boutherin@gmail.com';
-             $subject = 'Welcome to Camagru !';
-             $message = 'Welcome !';
-             $headers = 'From: webmaster@example.com' . "\r\n" .
-             'Reply-To: webmaster@example.com' . "\r\n" .
-             'X-Mailer: PHP/' . phpversion();
-              mail($to, $subject, $message, $headers);
+            $query->bindParam(':activation_id', $activation_id, PDO::PARAM_STR);
+            send_activation_mail($_POST['login'], 'eliot.boutherin@gmail.com', $activation_id);
             $query->execute();
             echo "User created !";
             ?><script>setTimeout(function() {window.location.href = "./index.php";}, 3000);</script><?php

@@ -12,7 +12,7 @@ if (auth($login, $passwd) === true) {
   header("Location: ./index.php");
 } else {
   $_SESSION['logged_on_user'] = "";
-  echo "ERROR\n";
+  echo "Cannot log in, is your account activated ?\n";
   ?><script>setTimeout(function() {window.location.href = "./index.php";}, 3000);</script><?php
 }
 ?>

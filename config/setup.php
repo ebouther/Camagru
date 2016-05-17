@@ -15,7 +15,9 @@
           ID int PRIMARY KEY NOT NULL AUTO_INCREMENT,
           login TEXT,
           passwd TEXT,
-          email TEXT
+          email TEXT,
+          activated BOOLEAN,
+          activation_id TEXT
         )
         ';
       }

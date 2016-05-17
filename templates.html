@@ -22,10 +22,13 @@
 </template>
 
 <template id="t_camera">
+  <button id="snap">Snap Photo</button>
+  <!--<canvas id="canvas"></canvas>-->
 
-  <video id="video" autoplay></video>
-  <!--<button id="snap">Snap Photo</button>
-  <canvas id="canvas"></canvas>-->
+  <div style="position: relative;">
+    <video id="video" autoplay></video>
+    <canvas id="layer" style="position: absolute; left: 0; top: 0; z-index: 1; width: 100%;height: 100%;"></canvas>
+  </div>
 
   <script>
   useTemplate('t_aside_logged', 'aside_buttons');
