@@ -1,23 +1,45 @@
 <?php
   include './config/database.php';
-
   if (!empty($_GET['id']))
   {
     try {
         $db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $sql = '
-          CREATE DATABASE IF NOT EXISTS camagru;
-          USE camagru;
-          UPDATE `users` SET `activated`=TRUE WHERE `activation_id`=:activation_id;
+          SELECT
+                COUNT(*)
+          FROM
+                `camagru`.`users`
+          WHERE
+                `users`.`activation_id`=:activation_id;
           ';
           $query = $db->prepare($sql);
           $query->bindParam(':activation_id', $_GET['id'], PDO::PARAM_STR);
           $query->execute();
-        $db->exec($sql);
+          $res = $query->fetchAll(PDO::FETCH_COLUMN);
+          $db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
+          $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+          $sql = '
+            UPDATE
+                  `camagru`.`users`
+            SET
+                  `users`.`activated`=TRUE
+            WHERE
+                  `users`.`activation_id`=:activation_id;
+            ';
+          $query = $db->prepare($sql);
+          $query->bindParam(':activation_id', $_GET['id'], PDO::PARAM_STR);
+          $db->exec($sql);
 
+          if ($res[0] == 1) {
+            echo 'Account successfully activated.';
+          }
+          else {
+            echo 'Error: cannot activate your account.';
+          }
     } catch (PDOException $e) {
         echo 'Failed to activate account : ' . $e->getMessage();
     }
   }
+  ?><script>setTimeout(function() {window.location.href = "./index.php";}, 3000);</script><?php
 ?>

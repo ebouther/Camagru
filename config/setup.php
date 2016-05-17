@@ -17,7 +17,8 @@
           passwd TEXT,
           email TEXT,
           activated BOOLEAN,
-          activation_id TEXT
+          activation_id TEXT,
+          reset_id TEXT
         )
         ';
       }

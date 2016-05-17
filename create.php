@@ -4,7 +4,7 @@ include './config/database.php';
 include './functions.php';
 
   if ($_POST['submit'] === "OK") {
-    if (!empty($_POST['login']) && !empty($_POST['passwd'])) {
+    if (!empty($_POST['login']) && !empty($_POST['passwd']) && !empty($_POST['email'])) {
       try {
           $db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
           $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -25,17 +25,20 @@ include './functions.php';
           } else {
             $hash = hash("whirlpool", $_POST['passwd']);
             $activation_id = md5(microtime(true));
+            $reset_id = md5($activation_id + rand());
             $sql = "
             INSERT INTO
                 `camagru`.`users`
-                (`login`, `passwd`, `activated`, `activation_id`)
+                (`login`, `passwd`, `email`, `activated`, `activation_id`, `reset_id`)
             VALUES
-                (:login, :hash, FALSE, :activation_id)";
+                (:login, :hash, :email, FALSE, :activation_id, :reset_id)";
             $query = $db->prepare($sql);
             $query->bindParam(':login', $_POST['login'], PDO::PARAM_STR);
             $query->bindParam(':hash', $hash, PDO::PARAM_STR);
             $query->bindParam(':activation_id', $activation_id, PDO::PARAM_STR);
-            send_activation_mail($_POST['login'], 'eliot.boutherin@gmail.com', $activation_id);
+            $query->bindParam(':reset_id', $reset_id, PDO::PARAM_STR);
+            $query->bindParam(':email', $_POST['email'], PDO::PARAM_STR);
+            send_activation_mail($_POST['login'], $_POST['email'], $activation_id);
             $query->execute();
             echo "User created !";
             ?><script>setTimeout(function() {window.location.href = "./index.php";}, 3000);</script><?php
