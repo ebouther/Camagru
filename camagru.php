@@ -1,6 +1,6 @@
 <html>
   <head>
-    <link rel="import" href="templates.html" id="templates">
+	<script type="text/javascript" src="templates.js"></script> 
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
   </head>
 
@@ -16,9 +16,9 @@
 
   <script src="script.js"></script>
   <script>
-    useTemplate("t_header", "header");
-    useTemplate("t_camera", "body");
+    useTemplate(t_header, "header");
+    //useTemplate(t_camera, "body");
   //  useTemplate("t_login", "body");
-    useTemplate("t_footer", "footer");
+    //useTemplate(t_footer, "footer");
   </script>
 </html>

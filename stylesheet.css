@@ -41,12 +41,23 @@ body {
    text-align: center;
 }
 
-#video {
+.img-picker {
+  display: block;
+  max-width:150px;
+  max-height:100px;
+  width: auto;
+  height: auto;
+}
+/*#video {
   position: absolute;
   left: 0;
   top: 0;
   z-index: 0;
   width: 100%;
+}*/
+
+canvas {
+	display: none;
 }
 
 #snap {
