@@ -70,7 +70,8 @@ t_aside.innerHTML = "<input type=\"button\" onclick=\"javascript:useTemplate(t_c
 var t_aside_logged = document.createElement("div");
 t_aside_logged.innerHTML = "<input type=\"button\" onclick=\"location.href='./logout.php';\" value=\"Disconnect\" /></br> \
   <input type=\"button\" onclick=\"javascript:useTemplate(t_change_passwd.cloneNode (true), 'body');\" value=\"Modify your password.\" /> \
-  <div id='snapshots'></div>";
+  <div id='snapshots'></div> \
+  <script>loadSnapshots()</script>";
 
 var t_footer = document.createElement("div");
 t_footer.innerHTML = "<p id=\"test\">Footer.</p>";

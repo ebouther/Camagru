@@ -2,12 +2,26 @@ function selection(img) {
 	selection.img = (img === selection.img) ? null : img;
 }
 
+function loadSnapshots() { 
+	var http = new XMLHttpRequest();
+	http.open("POST", "snap.php", true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if (http.readyState == 4 && http.status == 200) {
+			var snaps = JSON.parse(http.responseText);
+			for (var key in snaps) {
+				var new_snap = document.createElement('img');
+				new_snap.style = "width: 100%";
+				new_snap.src = "photos/" + snaps[key];
+				document.getElementById('snapshots').appendChild(new_snap);
+			}
+		}
+	}
+	http.send("snapshots=1");
+}
+
 function useTemplate(template, id) {
-	//var templatesImport = document.getElementById('templates');
-	//var templates = templatesImport.import;
-	//var myTemplate = templates.getElementById(template),
 	var normalContent = document.getElementById(id);
-	//clonedTemplate = myTemplate.content.cloneNode(true);
 	normalContent.innerHTML = '';
 	normalContent.appendChild(template);
 	var arr = template.getElementsByTagName('script')
@@ -33,9 +47,7 @@ function useCamera() {
 			if (selection.img === null || selection.img === undefined) {
 				alert("Please click on an image");
 			} else {
-				//var new_snap = t_snap.cloneNode (true);
 				var canvas = document.querySelector('canvas');
-				//document.getElementById('snapshots').appendChild(new_snap);
 				canvas.width = video.videoWidth;
 				canvas.height = video.videoHeight;
 
@@ -49,7 +61,8 @@ function useCamera() {
 						var new_snap = document.createElement('img');
 						new_snap.src = http.responseText;
 						new_snap.style = "width: 100%";
-						document.getElementById('snapshots').appendChild(new_snap);
+						var snapshots = document.getElementById('snapshots');
+						snapshots.insertBefore(new_snap, snapshots.childNodes[0]);
 					}
 				}
 				http.send("snap=" + encodeURIComponent(canvas.toDataURL('image/png')) + "&img=" + selection.img);
