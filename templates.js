@@ -14,11 +14,16 @@ var t_aside_create = document.createElement("div");
 t_aside_create.innerHTML = "<input type=\"button\" onclick=\"javascript:useTemplate(t_login.cloneNode (true), 'body');\" value=\"Log in.\" />";
 
 var t_images = document.createElement("div");
-t_images.innerHTML = "<img src='img/mask.png' style='width: 300px' onclick='javascript:selection(\"mask.png\")'>";
+t_images.innerHTML = "<img src='img/mask.png' class='accessories' onclick='javascript:selection(\"mask.png\")'> \
+<img src='img/glasses.png' class='accessories' onclick='javascript:selection(\"glasses.png\")'> \
+<img src='img/cigaret.png' class='accessories' onclick='javascript:selection(\"cigaret.png\")'> \
+<img src='img/hat.png' class='accessories' onclick='javascript:selection(\"hat.png\")'> \
+<img src='img/chain.png' class='accessories' onclick='javascript:selection(\"chain.png\")'> \
+";
 
 var t_camera = document.createElement("div");
 t_camera.innerHTML = "<button id=\"snap\">Snap Photo</button> \
-    <video id=\"video\" width=\"640\" height=\"480\" autoplay=\"\"></video> \
+    <video id=\"video\" autoplay=\"\"></video> \
 	<canvas></canvas> \
   <div id=\"images\"></div> \
   <script> \
@@ -28,11 +33,12 @@ t_camera.innerHTML = "<button id=\"snap\">Snap Photo</button> \
   </script>";
 
 var t_snap = document.createElement("div");
-t_snap.innerHTML = "<canvas class=\"snap\" style=\"width: 100%;\"></canvas>"; 
+t_snap.innerHTML = "<img src > \
+";
 
 var t_aside_modify = document.createElement("div");
-t_aside_modify.innerHTML = "<input type=\"button\" onclick=\"location.href='./logout.php';\" value=\"Disconnect\" /></br> \
-  <input type=\"button\" onclick=\"javascript:useTemplate(t_camera.cloneNode (true), 'body');\" value=\"Back to home.\" />";
+t_aside_modify.innerHTML = "<input type=\"button\" onclick=\"location.href='./logout.php?';\" value=\"Disconnect\" /></br> \
+  <input type=\"button\" onclick=\"location.href='./index.php'\" value=\"Back to Camera.\" />";
 
 var t_create_user = document.createElement("div");
 t_create_user.innerHTML = "<form action=\"./create.php\" method=\"post\"> \
@@ -69,9 +75,25 @@ t_aside.innerHTML = "<input type=\"button\" onclick=\"javascript:useTemplate(t_c
 
 var t_aside_logged = document.createElement("div");
 t_aside_logged.innerHTML = "<input type=\"button\" onclick=\"location.href='./logout.php';\" value=\"Disconnect\" /></br> \
-  <input type=\"button\" onclick=\"javascript:useTemplate(t_change_passwd.cloneNode (true), 'body');\" value=\"Modify your password.\" /> \
+  <input type=\"button\" onclick=\"javascript:useTemplate(t_change_passwd.cloneNode (true), 'body');\" value=\"Modify your password.\"/> </br> \
+  <input type=\"button\" onclick=\"location.href='index.php?gallery'\" value=\"Gallery\" /> \
   <div id='snapshots'></div> \
-  <script>loadSnapshots()</script>";
+  <script>loadUserSnaps()</script>";
+
+var t_aside_gallery = document.createElement("div");
+t_aside_gallery.innerHTML = "<input type=\"button\" onclick=\"location.href='./logout.php';\" value=\"Disconnect\" /></br> \
+  <input type=\"button\" onclick=\"location.href='index.php?gallery';\" value=\"Gallery\" /> \
+  <div id='snapshots'></div>";
+
+var t_gallery = document.createElement("div");
+t_gallery.innerHTML = "<div id='snapshots'></div> \
+  <script>loadSnapshots(); \
+  	useTemplate(t_aside_modify.cloneNode (true), 'aside_buttons'); \
+  </script>";
+
+var t_comment = document.createElement("div");
+t_comment.innerHTML = "<input type='text' name='commentSnap' id='comment'> \
+	<input type='submit' value='Comment' id='submit'>";
 
 var t_footer = document.createElement("div");
 t_footer.innerHTML = "<p id=\"test\">Footer.</p>";

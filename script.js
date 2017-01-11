@@ -2,7 +2,66 @@ function selection(img) {
 	selection.img = (img === selection.img) ? null : img;
 }
 
-function loadSnapshots() { 
+function getSnapLikes(snap) {
+	console.log ("getlike :" + snap);
+}
+
+function likeSnap(snap) {
+	var http = new XMLHttpRequest();
+	http.open("POST", "snap.php", true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if (http.readyState == 4 && http.status == 200) {
+			console.log (http.responseText + " liked :" + snap);
+		}
+	}
+	http.send("likeSnap=" + snap);
+}
+
+function commentSnap(comment, snap) {
+	var http = new XMLHttpRequest();
+	http.open("POST", "snap.php", true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if (http.readyState == 4 && http.status == 200) {
+			console.log ("comment :" + comment + "   snap:" + snap);
+		}
+	}
+	http.send("commentSnap=" + comment + "&snap_file=" + snap);
+}
+
+function getComments(snap, cb) {
+	var http = new XMLHttpRequest();
+	http.open("POST", "snap.php", true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if (http.readyState == 4 && http.status == 200) {
+			var ret = document.createElement ('div');
+			var img = document.createElement ('img');
+			img.src = "photos/" + snap;
+			ret.appendChild(img);
+			var comments = JSON.parse(http.responseText);
+			for (var key in comments) {
+				(function (comment) {
+					var com = document.createElement('p');
+					com.innerHTML = "[" + comments[key]['timestamp'] + "] <b>"
+									+ comments[key]['login'] + "</b>: "
+									+ comments[key]['comment'];
+					ret.appendChild(com);
+				})(comments[key]);
+			}
+			var input = t_comment.cloneNode(true);
+			input.querySelector("#submit").onclick = function()
+				{commentSnap(input.querySelector("#comment").value, snap);
+				 window.location.reload();};
+			ret.appendChild(input);
+			cb(ret);
+		}
+	}
+	http.send("getComments=" + snap);
+}
+
+function loadSnapshots() {
 	var http = new XMLHttpRequest();
 	http.open("POST", "snap.php", true);
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -10,14 +69,58 @@ function loadSnapshots() {
 		if (http.readyState == 4 && http.status == 200) {
 			var snaps = JSON.parse(http.responseText);
 			for (var key in snaps) {
-				var new_snap = document.createElement('img');
-				new_snap.style = "width: 100%";
-				new_snap.src = "photos/" + snaps[key];
-				document.getElementById('snapshots').appendChild(new_snap);
+
+				(function (snap) {
+					var snap_box = document.createElement('div');
+
+					var new_snap = document.createElement('img');
+					new_snap.style = "width: 100%";
+					new_snap.src = "photos/" + snap;
+
+					snap_box.appendChild (new_snap);
+
+					var comments = document.createElement('button');
+					comments.innerHTML = "Comments";
+					comments.onclick = function(){window.location = "index.php?snap=" + snap};
+
+					snap_box.appendChild (comments);
+
+					var like = document.createElement('button');
+					like.innerHTML = "Like";
+					like.addEventListener("click", function(){likeSnap(snap)});
+
+					var nb_like = document.createElement('p');
+					nb_like.innerHTML = getSnapLikes(snap);
+
+					snap_box.appendChild (like);
+
+					document.getElementById('snapshots').appendChild(snap_box);
+
+				}) (snaps[key]);
 			}
 		}
 	}
 	http.send("snapshots=1");
+}
+
+function loadUserSnaps() {
+	var http = new XMLHttpRequest();
+	http.open("POST", "snap.php", true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if (http.readyState == 4 && http.status == 200) {
+			var snaps = JSON.parse(http.responseText);
+			for (var key in snaps) {
+
+				var new_snap = document.createElement('img');
+				new_snap.style = "width: 100%";
+				new_snap.src = "photos/" + snaps[key];
+
+				document.getElementById('snapshots').appendChild(new_snap);
+			}
+		}
+	}
+	http.send("user_snaps=1");
 }
 
 function useTemplate(template, id) {
@@ -32,6 +135,8 @@ function useTemplate(template, id) {
 function useCamera() {
 	window.addEventListener("DOMContentLoaded", function() {
 		var video = document.getElementById("video");
+		console.log("useCamera");
+		video.play();
 		var videoObj = { "video": true };
 		var Log_Err = function(err) {
 			console.log("Video error: ", err.code);

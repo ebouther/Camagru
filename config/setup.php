@@ -13,13 +13,34 @@
         USE camagru;
         CREATE TABLE users (
           ID int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-          login TEXT,
+          login VARCHAR(8),
           passwd TEXT,
           email TEXT,
           activated BOOLEAN,
           activation_id TEXT,
           reset_id TEXT
-        )
+        );
+
+        CREATE TABLE snaps (
+          ID int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+		  snap_file VARCHAR(30),
+          user_id INT,
+		  likes INT
+		);
+
+        CREATE TABLE likes (
+          ID int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+		  user_id INT,
+          snap_file VARCHAR(30)
+		);
+
+        CREATE TABLE comments (
+          ID int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+          comment TEXT,
+          snap_file VARCHAR(30),
+		  timestamp INT,
+		  login VARCHAR(8)
+		);
         ';
       }
 

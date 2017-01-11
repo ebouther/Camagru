@@ -1,5 +1,5 @@
 <?php
-session_start();
+	session_start();
 ?>
 
 <html>
@@ -22,25 +22,20 @@ session_start();
 
   <script src="script.js"></script>
   <script>
-	//window.onresize = function(event) {
-	//	var canvas = document.getElementsByClassName('snap');
-	//	var length = canvas.length;
-	//	var ratio = 480.0 / 640.0;
-	//	for (var n = 0; n < length; n++)
-	//	{
-	//    	console.log("ratio : " + ratio);
-	//    	console.log("height : " + canvas[n].height);
-	//    	console.log("width : " + canvas[n].width);
-	//		canvas[n].height = (canvas[n].width * ratio);
-	//    	console.log("height2 : " + canvas[n].height);
-	//	}	
-	//};
     useTemplate(t_header.cloneNode (true), "header");
     <?php
-    if (!empty($_SESSION['logged_on_user'])) { ?>
-      useTemplate(t_camera.cloneNode (true), "body");
-    <?php
-  } else {?>
+    if (!empty($_SESSION['logged_on_user'])) {
+		if (isset ($_GET["gallery"])) { ?>
+			useTemplate(t_gallery.cloneNode (true), "body"); <?php
+		} else if (isset ($_GET['snap'])) { ?>
+			useTemplate(t_aside_gallery, "aside");
+			getComments("<?php echo $_GET['snap']; ?>", function (template){
+				useTemplate(template, "body");
+			}); <?php
+		} else { ?>
+			useTemplate(t_camera.cloneNode (true), "body"); <?php
+		}
+  	} else {?>
       useTemplate(t_login.cloneNode (true), "body");
     <?php
     } ?>
