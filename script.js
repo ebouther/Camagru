@@ -2,8 +2,17 @@ function selection(img) {
 	selection.img = (img === selection.img) ? null : img;
 }
 
-function getSnapLikes(snap) {
-	console.log ("getlike :" + snap);
+function getSnapLikes(snap, cb) {
+	var http = new XMLHttpRequest();
+	http.open("POST", "snap.php", true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if (http.readyState == 4 && http.status == 200) {
+			cb(http.responseText);
+			console.log (http.responseText + " likes - " + snap);
+		}
+	}
+	http.send("getSnapLikes=" + snap);
 }
 
 function likeSnap(snap) {
@@ -39,6 +48,7 @@ function getComments(snap, cb) {
 			var ret = document.createElement ('div');
 			var img = document.createElement ('img');
 			img.src = "photos/" + snap;
+			img.style = 'width: 100%;';
 			ret.appendChild(img);
 			var comments = JSON.parse(http.responseText);
 			for (var key in comments) {
@@ -50,6 +60,12 @@ function getComments(snap, cb) {
 					ret.appendChild(com);
 				})(comments[key]);
 			}
+			var likes = document.createElement('p');
+			getSnapLikes (snap, function (likes_nb) {
+				likes.innerHTML = likes_nb + (likes_nb == 1 ? " like" : " likes");
+			});
+			ret.appendChild(likes);
+
 			var input = t_comment.cloneNode(true);
 			input.querySelector("#submit").onclick = function()
 				{commentSnap(input.querySelector("#comment").value, snap);
@@ -72,12 +88,20 @@ function loadSnapshots() {
 
 				(function (snap) {
 					var snap_box = document.createElement('div');
+					snap_box.classList.add ("snap_box");
 
 					var new_snap = document.createElement('img');
 					new_snap.style = "width: 100%";
 					new_snap.src = "photos/" + snap;
 
 					snap_box.appendChild (new_snap);
+
+					var nb_like = document.createElement('p');
+					getSnapLikes(snap, function (likes_nb) {
+						nb_like.innerHTML = likes_nb + (likes_nb == 1 ? " like" : " likes");
+					});
+
+					snap_box.appendChild (nb_like);
 
 					var comments = document.createElement('button');
 					comments.innerHTML = "Comments";
@@ -88,10 +112,6 @@ function loadSnapshots() {
 					var like = document.createElement('button');
 					like.innerHTML = "Like";
 					like.addEventListener("click", function(){likeSnap(snap)});
-
-					var nb_like = document.createElement('p');
-					nb_like.innerHTML = getSnapLikes(snap);
-
 					snap_box.appendChild (like);
 
 					document.getElementById('snapshots').appendChild(snap_box);
@@ -135,7 +155,6 @@ function useTemplate(template, id) {
 function useCamera() {
 	window.addEventListener("DOMContentLoaded", function() {
 		var video = document.getElementById("video");
-		console.log("useCamera");
 		video.play();
 		var videoObj = { "video": true };
 		var Log_Err = function(err) {

@@ -12,7 +12,7 @@
 		$src = imagecreatefrompng("img/" . $_POST['img']);
 		$size = getimagesize("img/" . $_POST['img']);
 		imagecopy($dest, $src, 0, 0, 0, 0, $size[0], $size[1]);
-		$file = $_SESSION['logged_on_user'] . "-" . time()  . ".png";
+		$file =  time() . "-" . $_SESSION['logged_on_user'] . ".png";
 		imagepng($dest, "./photos/" . $file);
 
 		echo "./photos/" . $file;
@@ -40,9 +40,23 @@
 	} else if ($_POST['snapshots'] && $_SESSION['logged_on_user']) {
 		$files = array_reverse (preg_grep('~^.*\.(png)$~', scandir("./photos/")));	
 		echo json_encode($files);
+	} else if ($_POST['getSnapLikes'] && $_SESSION['logged_on_user']) {
+    	$db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
+     	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$sql = "
+			SELECT
+				`snaps`.`likes`
+			FROM
+				`camagru`.`snaps`
+			WHERE
+				`snap_file` = :snap_file";
+		$query = $db->prepare($sql);
+		$query->bindParam(':snap_file', $_POST['getSnapLikes'], PDO::PARAM_STR);
+		$query->execute();
+      	$res = $query->fetchAll(PDO::FETCH_COLUMN);
+		echo $res[0];
 	} else if ($_POST['likeSnap'] && $_SESSION['logged_on_user']) {
     	try {
-
         	$db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
          	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$sql = "

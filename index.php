@@ -16,8 +16,8 @@
        <div id="aside_buttons"></div>
          <div style="width:10;height:10;overflow:scroll" ></div>
        </div>
-       <div id="footer"></div>
     </div>
+    <div id="footer"></div>
   </body>
 
   <script src="script.js"></script>

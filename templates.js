@@ -1,5 +1,5 @@
 var t_header = document.createElement("div");
-t_header.innerHTML = "<p>Header.</p>";
+t_header.innerHTML = "Camagru";
 
 var t_login = document.createElement("div");
 t_login.innerHTML = "<form action=\"./login.php\" method=\"post\"> \
@@ -92,8 +92,8 @@ t_gallery.innerHTML = "<div id='snapshots'></div> \
   </script>";
 
 var t_comment = document.createElement("div");
-t_comment.innerHTML = "<input type='text' name='commentSnap' id='comment'> \
+t_comment.innerHTML = "<input type='text' style='100%' name='commentSnap' id='comment'> \
 	<input type='submit' value='Comment' id='submit'>";
 
 var t_footer = document.createElement("div");
-t_footer.innerHTML = "<p id=\"test\">Footer.</p>";
+t_footer.innerHTML = "<p id=\"test\">Copyright &copy; 2017</br>Made with love by ebouther.</p>";
