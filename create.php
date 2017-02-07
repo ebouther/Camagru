@@ -42,7 +42,9 @@ if ($_POST['submit'] === "OK") {
 					$query->bindParam(':activation_id', $activation_id, PDO::PARAM_STR);
 					$query->bindParam(':reset_id', $reset_id, PDO::PARAM_STR);
 					$query->bindParam(':email', $_POST['email'], PDO::PARAM_STR);
+
 					send_activation_mail($_POST['login'], $_POST['email'], $activation_id);
+
 					$query->execute();
 					echo "User created !";
 					?><script>setTimeout(function() {window.location.href = "./index.php";}, 1000);</script><?php
