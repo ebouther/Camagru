@@ -37,7 +37,7 @@
 	} else if ($_POST['user_snaps'] && $_SESSION['logged_on_user']) {
 		$files = array_reverse (preg_grep ('~^' .  $_SESSION['logged_on_user'] . '.*\.(png)$~', scandir("./photos/")));
 		echo json_encode($files);
-	} else if ($_POST['snapshots'] && $_SESSION['logged_on_user']) {
+	} else if ($_POST['snapshots']) { //&& $_SESSION['logged_on_user']) {
 		$files = array_reverse (preg_grep('~^.*\.(png)$~', scandir("./photos/")));	
 		echo json_encode($files);
 	} else if ($_POST['getSnapLikes'] && $_SESSION['logged_on_user']) {

@@ -1,14 +1,25 @@
 var t_header = document.createElement("div");
 t_header.innerHTML = "Camagru";
 
-var t_login = document.createElement("div");
+t_login = document.createElement("div");
 t_login.innerHTML = "<form action=\"./login.php\" method=\"post\"> \
     Login: <input type=\"text\" name=\"login\" value=\"\" /> \
     <br /> \
-    Password: <input type=\"text\" name=\"passwd\" value=\"\" /> \
+    Password: <input type=\"password\" name=\"passwd\" value=\"\" /> \
     <input type=\"submit\" value=\"OK\" /> \
   </form> \
   <script>useTemplate(t_aside.cloneNode (true), 'aside_buttons');</script>";
+
+var t_reset = document.createElement("div");
+t_reset.innerHTML = "<form action=\"./pass.php\" method=\"post\"> \
+    New Password: <input type=\"password\" name=\"new_pass\" value=\"\" /> \
+    <input id=\"reset_id\" type=\"hidden\" name=\"url\" value=\"\" /> \
+    <input type=\"submit\" value=\"OK\" /> \
+  </form> \
+  <script> \
+	useTemplate(t_aside.cloneNode (true), 'aside_buttons'); \
+    document.getElementById('reset_id').value = window.location.href; \
+  </script>";
 
 var t_aside_create = document.createElement("div");
 t_aside_create.innerHTML = "<input type=\"button\" onclick=\"javascript:useTemplate(t_login.cloneNode (true), 'body');\" value=\"Log in.\" />";
@@ -71,7 +82,8 @@ t_change_passwd.innerHTML = "<form action=\"./modif.php\" method=\"post\"> \
 
 var t_aside = document.createElement("div");
 t_aside.innerHTML = "<input type=\"button\" onclick=\"javascript:useTemplate(t_create_user.cloneNode (true), 'body');\" value=\"Create an account.\" /></br> \
-  <input type=\"button\" onclick=\"javascript:useTemplate(t_forgot_pass.cloneNode (true), 'body');\" value=\"Forgot your password ?\" />";
+  <input type=\"button\" onclick=\"javascript:useTemplate(t_forgot_pass.cloneNode (true), 'body');\" value=\"Forgot your password ?\" /></br> \
+  <input type=\"button\" onclick=\"location.href='./index.php?gallery';\" value=\"Gallery\" />";
 
 var t_aside_logged = document.createElement("div");
 t_aside_logged.innerHTML = "<input type=\"button\" onclick=\"location.href='./logout.php';\" value=\"Disconnect\" /></br> \
@@ -85,10 +97,17 @@ t_aside_gallery.innerHTML = "<input type=\"button\" onclick=\"location.href='./l
   <input type=\"button\" onclick=\"location.href='index.php?gallery';\" value=\"Gallery\" /> \
   <div id='snapshots'></div>";
 
+var t_aside_public_gallery = document.createElement("div");
+t_aside_public_gallery.innerHTML = "<input type=\"button\" onclick=\"location.href='index.php';\" value=\"Back to Home\" />";
+
 var t_gallery = document.createElement("div");
 t_gallery.innerHTML = "<div id='snapshots'></div> \
-  <script>loadSnapshots(); \
-  	useTemplate(t_aside_modify.cloneNode (true), 'aside_buttons'); \
+  <script>loadSnapshots(true); \
+  </script>";
+
+var t_public_gallery = document.createElement("div");
+t_public_gallery.innerHTML = "<div id='snapshots'></div> \
+  <script>loadSnapshots(false); \
   </script>";
 
 var t_comment = document.createElement("div");

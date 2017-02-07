@@ -25,19 +25,32 @@
     useTemplate(t_header.cloneNode (true), "header");
     <?php
     if (!empty($_SESSION['logged_on_user'])) {
-		if (isset ($_GET["gallery"])) { ?>
-			useTemplate(t_gallery.cloneNode (true), "body"); <?php
-		} else if (isset ($_GET['snap'])) { ?>
-			useTemplate(t_aside_gallery, "aside");
-			getComments("<?php echo $_GET['snap']; ?>", function (template){
-				useTemplate(template, "body");
-			}); <?php
+		if (isset ($_GET["gallery"])) {
+			?>
+				useTemplate(t_gallery.cloneNode (true), "body");
+				useTemplate(t_aside_modify.cloneNode (true), 'aside_buttons');
+			<?php
+		} else if (isset ($_GET['snap'])) {
+			?>
+				useTemplate(t_aside_gallery, "aside");
+				getComments("<?php echo $_GET['snap']; ?>", function (template){
+					useTemplate(template, "body");
+				});
+			<?php
 		} else { ?>
 			useTemplate(t_camera.cloneNode (true), "body"); <?php
 		}
-  	} else {?>
-      useTemplate(t_login.cloneNode (true), "body");
-    <?php
+	} else { 
+		if (isset ($_GET['gallery'])) {
+			?>
+				useTemplate(t_public_gallery.cloneNode (true), "body");
+				useTemplate(t_aside_public_gallery.cloneNode (true), 'aside_buttons');
+			<?php
+		} else if (isset ($_GET['reset'])) {
+			?> useTemplate(t_reset.cloneNode (true), "body"); <?php
+		} else {
+			?> useTemplate(t_login.cloneNode (true), "body"); <?php
+		}
     } ?>
     useTemplate(t_footer.cloneNode (true), "footer");
   </script>

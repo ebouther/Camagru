@@ -55,8 +55,8 @@ function getComments(snap, cb) {
 				(function (comment) {
 					var com = document.createElement('p');
 					com.innerHTML = "[" + comments[key]['timestamp'] + "] <b>"
-									+ comments[key]['login'] + "</b>: "
-									+ comments[key]['comment'];
+						+ comments[key]['login'] + "</b>: "
+						+ comments[key]['comment'];
 					ret.appendChild(com);
 				})(comments[key]);
 			}
@@ -68,8 +68,8 @@ function getComments(snap, cb) {
 
 			var input = t_comment.cloneNode(true);
 			input.querySelector("#submit").onclick = function()
-				{commentSnap(input.querySelector("#comment").value, snap);
-				 window.location.reload();};
+			{commentSnap(input.querySelector("#comment").value, snap);
+				window.location.reload();};
 			ret.appendChild(input);
 			cb(ret);
 		}
@@ -77,7 +77,7 @@ function getComments(snap, cb) {
 	http.send("getComments=" + snap);
 }
 
-function loadSnapshots() {
+function loadSnapshots(logged) {
 	var http = new XMLHttpRequest();
 	http.open("POST", "snap.php", true);
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -96,23 +96,26 @@ function loadSnapshots() {
 
 					snap_box.appendChild (new_snap);
 
-					var nb_like = document.createElement('p');
-					getSnapLikes(snap, function (likes_nb) {
-						nb_like.innerHTML = likes_nb + (likes_nb == 1 ? " like" : " likes");
-					});
+					if (logged)
+					{
+						var nb_like = document.createElement('p');
+						getSnapLikes(snap, function (likes_nb) {
+							nb_like.innerHTML = likes_nb + (likes_nb == 1 ? " like" : " likes");
+						});
 
-					snap_box.appendChild (nb_like);
+						snap_box.appendChild (nb_like);
 
-					var comments = document.createElement('button');
-					comments.innerHTML = "Comments";
-					comments.onclick = function(){window.location = "index.php?snap=" + snap};
+						var comments = document.createElement('button');
+						comments.innerHTML = "Comments";
+						comments.onclick = function(){window.location = "index.php?snap=" + snap};
 
-					snap_box.appendChild (comments);
+						snap_box.appendChild (comments);
 
-					var like = document.createElement('button');
-					like.innerHTML = "Like";
-					like.addEventListener("click", function(){likeSnap(snap)});
-					snap_box.appendChild (like);
+						var like = document.createElement('button');
+						like.innerHTML = "Like";
+						like.addEventListener("click", function(){likeSnap(snap)});
+						snap_box.appendChild (like);
+					}
 
 					document.getElementById('snapshots').appendChild(snap_box);
 
@@ -148,24 +151,40 @@ function useTemplate(template, id) {
 	normalContent.innerHTML = '';
 	normalContent.appendChild(template);
 	var arr = template.getElementsByTagName('script')
-		for (var n = 0; n < arr.length; n++)
-			eval(arr[n].innerHTML);
+	for (var n = 0; n < arr.length; n++)
+		eval(arr[n].innerHTML);
 }
 
 function useCamera() {
 	window.addEventListener("DOMContentLoaded", function() {
 		var video = document.getElementById("video");
-		video.play();
-		var videoObj = { "video": true };
-		var Log_Err = function(err) {
-			console.log("Video error: ", err.code);
-		};
 
-		var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-		getUserMedia.call(navigator, videoObj, function(stream) {
-			video.src = (navigator.webkitGetUserMedia) ? window.URL.createObjectURL(stream) : stream;
-			video.play();
-		}, Log_Err);
+		navigator.getMedia = (navigator.getUserMedia ||
+			navigator.webkitGetUserMedia ||
+				navigator.mozGetUserMedia ||
+				navigator.msGetUserMedia);
+
+		navigator.getMedia(
+			{ 
+				video: true, 
+				audio: false 
+			},
+			function(stream) {
+				if (navigator.mozGetUserMedia) { 
+					video.mozSrcObject = stream;
+				} else {
+					var vendorURL = window.URL || window.webkitURL;
+					video.src = vendorURL ? vendorURL.createObjectURL(stream) : stream;
+				}
+				video.play();
+			},
+			function(err) {
+				console.log("ERROR: " + err);
+			}
+		);
+
+		video.play();
+		//}, Log_Err);
 
 		document.getElementById("snap").addEventListener("click", function() {
 			if (selection.img === null || selection.img === undefined) {
@@ -193,88 +212,4 @@ function useCamera() {
 			}
 		});
 	}, false);
-	//layers();
 }
-
-function layers() {
-	var canvas = document.getElementById("layer"),
-		context = canvas.getContext("2d"),
-		img = document.createElement("img"),
-		mouseDown = false,
-		brushColor = "rgb(0, 0, 0)",
-		hasText = true,
-
-		clearCanvas = function () {
-			if (hasText) {
-				context.clearRect(0, 0, canvas.width, canvas.height);
-				hasText = false;
-			}
-		};
-
-	// Adding instructions
-	context.fillText("Drop an image onto the canvas", 240, 200);
-	context.fillText("Click a spot to set as brush color", 240, 220);
-
-	// Image for loading
-	img.addEventListener("load", function () {
-		clearCanvas();
-		context.drawImage(img, 0, 0);
-	}, false);
-
-	// Detect mousedown
-	canvas.addEventListener("mousedown", function (evt) {
-		clearCanvas();
-		mouseDown = true;
-		context.beginPath();
-	}, false);
-
-	// Detect mouseup
-	canvas.addEventListener("mouseup", function (evt) {
-		mouseDown = false;
-		var colors = context.getImageData(evt.layerX, evt.layerY, 1, 1).data;
-		brushColor = "rgb(" + colors[0] + ", " + colors[1] + ", " + colors[2] + ")";
-	}, false);
-
-	// Draw, if mouse button is pressed
-	canvas.addEventListener("mousemove", function (evt) {
-		if (mouseDown) {
-			context.strokeStyle = brushColor;
-			context.lineWidth = 20;
-			context.lineJoin = "round";
-			context.lineTo(evt.layerX+1, evt.layerY+1);
-			context.stroke();
-		}
-	}, false);
-
-	// To enable drag and drop
-	canvas.addEventListener("dragover", function (evt) {
-		evt.preventDefault();
-	}, false);
-
-	// Handle dropped image file - only Firefox and Google Chrome
-	canvas.addEventListener("drop", function (evt) {
-		var files = evt.dataTransfer.files;
-		if (files.length > 0) {
-			var file = files[0];
-			if (typeof FileReader !== "undefined" && file.type.indexOf("image") != -1) {
-				var reader = new FileReader();
-				// Note: addEventListener doesn't work in Google Chrome for this event
-				reader.onload = function (evt) {
-					img.src = evt.target.result;
-				};
-				reader.readAsDataURL(file);
-			}
-		}
-		evt.preventDefault();
-	}, false);
-
-
-	// Save image
-	var saveImage = document.createElement("button");
-	saveImage.innerHTML = "Save canvas";
-	saveImage.addEventListener("click", function (evt) {
-		window.open(canvas.toDataURL("image/png"));
-		evt.preventDefault();
-	}, false);
-	document.getElementById("container").appendChild(saveImage);
-};
