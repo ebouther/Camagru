@@ -5,9 +5,8 @@ include './functions.php';
 
 if ($_POST['submit'] === "OK") {
 	if (!empty($_POST['login']) && !empty($_POST['passwd']) && !empty($_POST['email'])) {
-		if (strlen ($_POST['login']) > 8) {
+		if (strlen ($_POST['login']) > 8 && !secure_pass($_POST['passwd'])) {
 			echo "Login too long (8 char max)";
-			?><script>setTimeout(function() {window.location.href = "./index.php";}, 3000);</script><?php
 		} else {
 			try {
 				$db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
@@ -25,7 +24,6 @@ if ($_POST['submit'] === "OK") {
 				$res = $query->fetchAll(PDO::FETCH_COLUMN);
 				if ($res[0] > 0) {
 					echo "Error, login " . $_POST['login'] . " already exists.";
-					?><script>setTimeout(function() {window.location.href = "./index.php";}, 3000);</script><?php
 				} else {
 					$hash = hash("whirlpool", $_POST['passwd']);
 					$activation_id = md5(microtime(true));
@@ -47,21 +45,17 @@ if ($_POST['submit'] === "OK") {
 
 					$query->execute();
 					echo "User created !";
-					?><script>setTimeout(function() {window.location.href = "./index.php";}, 1000);</script><?php
 				}
 			} catch (PDOException $e) {
 				echo 'Bad Input';
-				?><script>setTimeout(function() {window.location.href = "./index.php";}, 3000);</script><?php
 			}
 		}
 	} else {
 		echo "Enter a login and password.";
-		?><script>setTimeout(function() {window.location.href = "./index.php";}, 3000);</script><?php
 	}
 }
 else {
 	echo "Hum, hello ?";
-	?><script>setTimeout(function() {window.location.href = "./index.php";}, 3000);</script><?php
 }
+?><script>setTimeout(function() {window.location.href = "./index.php";}, 3000);</script>
 
-?>

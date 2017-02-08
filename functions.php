@@ -14,4 +14,10 @@
               'To reset your account password go to: http://' . $_SERVER['HTTP_HOST'] . '/camagru/index.php?reset=' . $reset_id;
     return mail($to, $subject, $message);
   }
+
+  function secure_pass($pass) {
+	  if (strlen($pass) >= 6 && preg_match('/[A-Z]+[a-z]+[0-9]+/', $pass))
+		  return true;
+	  return false;
+  }
 ?>
