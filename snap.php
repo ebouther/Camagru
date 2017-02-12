@@ -1,6 +1,7 @@
 <?php
   	session_start();
   	include './config/database.php';
+    include './functions.php';
 
 	if ($_POST['img'] && $_POST['snap'] && $_SESSION['logged_on_user'])
 	{
@@ -38,7 +39,7 @@
 		$files = array_reverse (preg_grep ('~^' .  $_SESSION['logged_on_user'] . '.*\.(png)$~', scandir("./photos/")));
 		echo json_encode($files);
 	} else if ($_POST['snapshots']) { //&& $_SESSION['logged_on_user']) {
-		$files = array_reverse (preg_grep('~^.*\.(png)$~', scandir("./photos/")));	
+		$files = array_reverse (preg_grep('~^.*\.(png)$~', scandir("./photos/")));
 		echo json_encode($files);
 	} else if ($_POST['getSnapLikes'] && $_SESSION['logged_on_user']) {
     	$db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
@@ -86,7 +87,7 @@
 				$query->execute();
 
 				$sql = "
-				UPDATE	
+				UPDATE
 					`camagru`.`snaps`
 				SET
 					`likes` = `likes` + 1
@@ -101,20 +102,39 @@
     	}
 	} else if ($_POST['commentSnap'] && $_POST['snap_file'] && $_SESSION['logged_on_user']) {
     	try {
-			$db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-			$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$sql = "
-			INSERT INTO
-				`camagru`.`comments`
-				(`comment`, `login`, `timestamp`, `snap_file`)
-			VALUES
-				(:comment, :login, :timestamp, :snap_file)";
-			$query = $db->prepare($sql);
-			$query->bindParam(':comment', $_POST['commentSnap'], PDO::PARAM_STR);
-			$query->bindParam(':login', $_SESSION['logged_on_user'], PDO::PARAM_STR);
-			$query->bindParam(':timestamp', time(), PDO::PARAM_INT);
-			$query->bindParam(':snap_file', $_POST['snap_file'], PDO::PARAM_STR);
-			$query->execute();
+  			$db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
+  			$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+
+        $sql = "
+  			SELECT
+          `login`,`email`
+        FROM
+          `camagru`.`snaps`
+        JOIN
+          `camagru`.`users` ON `snaps`.`user_id` = `users`.`ID`
+        WHERE
+          `snap_file` = :snap_file
+        ";
+
+  			$query = $db->prepare($sql);
+  			$query->bindParam(':snap_file', $_POST['snap_file'], PDO::PARAM_STR);
+  			$query->execute();
+        $res = $query->fetch();
+        send_new_comment_mail($res['login'], $res['email'], $_SESSION['logged_on_user']);
+
+  			$sql = "
+  			INSERT INTO
+  				`camagru`.`comments`
+  				(`comment`, `login`, `timestamp`, `snap_file`)
+  			VALUES
+  				(:comment, :login, :timestamp, :snap_file)";
+  			$query = $db->prepare($sql);
+  			$query->bindParam(':comment', $_POST['commentSnap'], PDO::PARAM_STR);
+  			$query->bindParam(':login', $_SESSION['logged_on_user'], PDO::PARAM_STR);
+  			$query->bindParam(':timestamp', time(), PDO::PARAM_INT);
+  			$query->bindParam(':snap_file', $_POST['snap_file'], PDO::PARAM_STR);
+  			$query->execute();
     	} catch (PDOException $e) {
         	echo 'Caught Exception : ' . $e->getMessage();
     	}
@@ -127,7 +147,7 @@
           	FROM
           	    `camagru`.`comments`
           	WHERE
-				`snap_file` = :snap_file";
+				        `snap_file` = :snap_file";
 			$query = $db->prepare($sql);
 			$query->bindParam(':snap_file', $_POST['getComments'], PDO::PARAM_STR);
 			$query->execute();

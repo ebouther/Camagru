@@ -15,6 +15,14 @@
     return mail($to, $subject, $message);
   }
 
+  function send_new_comment_mail($login, $email, $sender) {
+    $to      =  $email;
+    $subject = 'Camagru - New Comment';
+    $message = 'Hello ' . $login . '!' . PHP_EOL .
+              'Check your photos on Camagru, you have a new comment from ' . $sender . ' !';
+    return mail($to, $subject, $message);
+  }
+
   function secure_pass($pass) {
 	  if (strlen($pass) >= 6 && preg_match('/[A-Z]+[a-z]+[0-9]+/', $pass))
 		  return true;

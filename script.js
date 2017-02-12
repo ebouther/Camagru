@@ -32,6 +32,7 @@ function commentSnap(comment, snap) {
 	http.open("POST", "snap.php", true);
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
+		console.log(http.responseText);
 		if (http.readyState == 4 && http.status == 200) {
 			console.log ("comment :" + comment + "   snap:" + snap);
 		}
@@ -83,6 +84,7 @@ function loadSnapshots(logged) {
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if (http.readyState == 4 && http.status == 200) {
+			console.log(http.responseText);
 			var snaps = JSON.parse(http.responseText);
 			for (var key in snaps) {
 
@@ -165,12 +167,12 @@ function useCamera() {
 				navigator.msGetUserMedia);
 
 		navigator.getMedia(
-			{ 
-				video: true, 
-				audio: false 
+			{
+				video: true,
+				audio: false
 			},
 			function(stream) {
-				if (navigator.mozGetUserMedia) { 
+				if (navigator.mozGetUserMedia) {
 					video.mozSrcObject = stream;
 				} else {
 					var vendorURL = window.URL || window.webkitURL;

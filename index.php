@@ -5,7 +5,7 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
-	<script type="text/javascript" src="templates.js"></script> 
+	<script type="text/javascript" src="templates.js"></script>
   </head>
 
   <body>
@@ -14,7 +14,7 @@
        <div id="body"></div>
        <div id="aside">
        <div id="aside_buttons"></div>
-         <div style="width:10;height:10;overflow:scroll" ></div>
+         <div style="overflow:scroll;" ></div>
        </div>
     </div>
     <div id="footer"></div>
@@ -40,7 +40,7 @@
 		} else { ?>
 			useTemplate(t_camera.cloneNode (true), "body"); <?php
 		}
-	} else { 
+	} else {
 		if (isset ($_GET['gallery'])) {
 			?>
 				useTemplate(t_public_gallery.cloneNode (true), "body");
