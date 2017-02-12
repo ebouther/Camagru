@@ -38,9 +38,11 @@
 	} else if ($_POST['user_snaps'] && $_SESSION['logged_on_user']) {
 		$files = array_reverse (preg_grep ('~^' .  $_SESSION['logged_on_user'] . '.*\.(png)$~', scandir("./photos/")));
 		echo json_encode($files);
-	} else if ($_POST['snapshots']) { //&& $_SESSION['logged_on_user']) {
+	} else if (!empty($_POST['snapshots'])) {
+
 		$files = array_reverse (preg_grep('~^.*\.(png)$~', scandir("./photos/")));
-		echo json_encode($files);
+		echo json_encode(array_slice($files, $_POST['page'] * 5, $_POST['page'] * 5 + 5));
+
 	} else if ($_POST['getSnapLikes'] && $_SESSION['logged_on_user']) {
     	$db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
      	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -66,8 +68,8 @@
           	FROM
           	    `camagru`.`likes`
           	WHERE
-				`user_id` = :user_id
-			AND `snap_file` = :snap_file";
+				        `user_id` = :user_id
+			      AND `snap_file` = :snap_file";
 			$query = $db->prepare($sql);
 			$query->bindParam(':snap_file', $_POST['likeSnap'], PDO::PARAM_STR);
 			$query->bindParam(':user_id', $_SESSION['logged_on_user_id'], PDO::PARAM_INT);
@@ -156,7 +158,5 @@
     	} catch (PDOException $e) {
         	echo 'Caught Exception : ' . $e->getMessage();
     	}
-  	} else {
-		echo "[404] Hum, c't'embarrassant...";
-	}
+  	}
 ?>

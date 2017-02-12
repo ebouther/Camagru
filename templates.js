@@ -105,12 +105,12 @@ t_aside_public_gallery.innerHTML = "<input class=\"aside_btn\" type=\"button\" o
 
 var t_gallery = document.createElement("div");
 t_gallery.innerHTML = "<div id='snapshots'></div> \
-  <script>loadSnapshots(true); \
+  <script>loadSnapshots(true, 0); \
   </script>";
 
 var t_public_gallery = document.createElement("div");
 t_public_gallery.innerHTML = "<div id='snapshots'></div> \
-  <script>loadSnapshots(false); \
+  <script>loadSnapshots(false, 0); \
   </script>";
 
 var t_comment = document.createElement("div");

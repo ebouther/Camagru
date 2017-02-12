@@ -78,7 +78,7 @@ function getComments(snap, cb) {
 	http.send("getComments=" + snap);
 }
 
-function loadSnapshots(logged) {
+function loadSnapshots(logged, page) {
 	var http = new XMLHttpRequest();
 	http.open("POST", "snap.php", true);
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -86,46 +86,46 @@ function loadSnapshots(logged) {
 		if (http.readyState == 4 && http.status == 200) {
 			console.log(http.responseText);
 			var snaps = JSON.parse(http.responseText);
+
 			for (var key in snaps) {
+					(function (snap) {
+						var snap_box = document.createElement('div');
+						snap_box.classList.add ("snap_box");
 
-				(function (snap) {
-					var snap_box = document.createElement('div');
-					snap_box.classList.add ("snap_box");
+						var new_snap = document.createElement('img');
+						new_snap.style = "width: 100%";
+						new_snap.src = "photos/" + snap;
 
-					var new_snap = document.createElement('img');
-					new_snap.style = "width: 100%";
-					new_snap.src = "photos/" + snap;
+						snap_box.appendChild (new_snap);
 
-					snap_box.appendChild (new_snap);
+						if (logged)
+						{
+							var nb_like = document.createElement('p');
+							getSnapLikes(snap, function (likes_nb) {
+								nb_like.innerHTML = likes_nb + (likes_nb == 1 ? " like" : " likes");
+							});
 
-					if (logged)
-					{
-						var nb_like = document.createElement('p');
-						getSnapLikes(snap, function (likes_nb) {
-							nb_like.innerHTML = likes_nb + (likes_nb == 1 ? " like" : " likes");
-						});
+							snap_box.appendChild (nb_like);
 
-						snap_box.appendChild (nb_like);
+							var comments = document.createElement('button');
+							comments.innerHTML = "Comments";
+							comments.onclick = function(){window.location = "index.php?snap=" + snap};
 
-						var comments = document.createElement('button');
-						comments.innerHTML = "Comments";
-						comments.onclick = function(){window.location = "index.php?snap=" + snap};
+							snap_box.appendChild (comments);
 
-						snap_box.appendChild (comments);
+							var like = document.createElement('button');
+							like.innerHTML = "Like";
+							like.addEventListener("click", function(){likeSnap(snap)});
+							snap_box.appendChild (like);
+						}
 
-						var like = document.createElement('button');
-						like.innerHTML = "Like";
-						like.addEventListener("click", function(){likeSnap(snap)});
-						snap_box.appendChild (like);
-					}
+						document.getElementById('snapshots').appendChild(snap_box);
 
-					document.getElementById('snapshots').appendChild(snap_box);
-
-				}) (snaps[key]);
+					}) (snaps[key]);
 			}
 		}
 	}
-	http.send("snapshots=1");
+	http.send("snapshots=1&page=" + page);
 }
 
 function loadUserSnaps() {
@@ -186,7 +186,6 @@ function useCamera() {
 		);
 
 		video.play();
-		//}, Log_Err);
 
 		document.getElementById("snap").addEventListener("click", function() {
 			if (selection.img === null || selection.img === undefined) {
