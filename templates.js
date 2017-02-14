@@ -36,7 +36,10 @@ t_images.innerHTML = "<img src='img/mask.png' class='accessories' onclick='javas
 
 var t_camera = document.createElement("div");
 t_camera.innerHTML = "<button class=\"aside_btn\" id=\"snap\">Snap Photo</button> \
-    <video id=\"video\" autoplay=\"\"></video> \
+  <video id=\"video\" autoplay=\"\"> \
+    <img id=\"upload_img\" /> \
+  </video> \
+  <input type=\"file\" onchange=\"previewFile()\"><br> \
 	<canvas></canvas> \
   <div id=\"images\"></div> \
   <script> \

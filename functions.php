@@ -1,5 +1,27 @@
 <?php
 
+
+  function remove_snap ($snap) {
+
+    try {
+      //echo $snap;
+        $db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $sql = "
+      DELETE FROM
+        `camagru`.`snaps`
+      WHERE
+        `snaps`.`snap_file` = :snap
+      ";
+
+    $query = $db->prepare($sql);
+    $query->bindParam(':snap', $snap, PDO::PARAM_STR);
+    $query->execute();
+    } catch (PDOException $e) {
+        echo 'Caught Exception : ' . $e->getMessage();
+    }
+  }
+
   function send_activation_mail($login, $email, $activation_id) {
     $subject = 'Welcome to Camagru ' . $login . ' !';
     $message = 'Welcome ' . $login . '!' . PHP_EOL .

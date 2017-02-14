@@ -7,8 +7,8 @@
 	{
 		$snap = base64_decode(explode(',', $_POST['snap'])[1]);
 		$fd = fopen("tmp.png" , 'w+b');
-     	fwrite($fd, $snap);
-     	fclose($fd);
+   	fwrite($fd, $snap);
+   	fclose($fd);
 		$dest = imagecreatefrompng("./tmp.png");
 		$src = imagecreatefrompng("img/" . $_POST['img']);
 		$size = getimagesize("img/" . $_POST['img']);
@@ -36,11 +36,34 @@
     	}
 
 	} else if ($_POST['user_snaps'] && $_SESSION['logged_on_user']) {
-		$files = array_reverse (preg_grep ('~^' .  $_SESSION['logged_on_user'] . '.*\.(png)$~', scandir("./photos/")));
+		$files = array_reverse (preg_grep ('~^[0-9]*-' . $_SESSION['logged_on_user'] . '\.(png)$~', scandir("./photos/")));
 		echo json_encode($files);
-	} else if (!empty($_POST['snapshots'])) {
 
-		$files = array_reverse (preg_grep('~^.*\.(png)$~', scandir("./photos/")));
+  } else if (!empty($_POST['removeSnap']) && $_SESSION['logged_on_user']) {
+		if (preg_match('~^[0-9]+(-)(.+)(.png)~', $_POST['removeSnap'], $m) !== null) {
+      if ($m[2] === $_SESSION['logged_on_user']) {
+        try {
+        $db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $sql = "
+          DELETE FROM
+            `camagru`.`snaps`
+          WHERE
+            `snaps`.`snap_file` = :snap
+          ";
+
+        $query = $db->prepare($sql);
+        $query->bindParam(':snap', $snap, PDO::PARAM_STR);
+        $query->execute();
+        } catch (PDOException $e) {
+            echo 'Caught Exception : ' . $e->getMessage();
+        }
+      }
+        //remove_snap($_POST['removeSnap']);
+    }
+
+	} else if (!empty($_POST['snapshots'])) {
+		$files = array_reverse (preg_grep('~^[0-9]+(-' . $_SESSION['logged_on_user'] . ')\.(png)$~', scandir("./photos/")));
 		echo json_encode(array_slice($files, $_POST['page'] * 5, $_POST['page'] * 5 + 5));
 
 	} else if ($_POST['getSnapLikes'] && $_SESSION['logged_on_user']) {
@@ -56,49 +79,49 @@
 		$query = $db->prepare($sql);
 		$query->bindParam(':snap_file', $_POST['getSnapLikes'], PDO::PARAM_STR);
 		$query->execute();
-      	$res = $query->fetchAll(PDO::FETCH_COLUMN);
+    $res = $query->fetchAll(PDO::FETCH_COLUMN);
 		echo $res[0];
 	} else if ($_POST['likeSnap'] && $_SESSION['logged_on_user']) {
     	try {
-        	$db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-         	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$sql = "
-          	SELECT
-          	    COUNT(*)
-          	FROM
-          	    `camagru`.`likes`
-          	WHERE
-				        `user_id` = :user_id
-			      AND `snap_file` = :snap_file";
-			$query = $db->prepare($sql);
-			$query->bindParam(':snap_file', $_POST['likeSnap'], PDO::PARAM_STR);
-			$query->bindParam(':user_id', $_SESSION['logged_on_user_id'], PDO::PARAM_INT);
-			$query->execute();
-          	$res = $query->fetchAll(PDO::FETCH_COLUMN);
-			if ($res[0] == 0)
-			{
-				$sql = "
-				INSERT INTO
-					`camagru`.`likes`
-					(`snap_file`, `user_id`)
-				VALUES
-					(:snap_file, :user_id)";
-				$query = $db->prepare($sql);
-				$query->bindParam(':snap_file', $_POST['likeSnap'], PDO::PARAM_STR);
-				$query->bindParam(':user_id', $_SESSION['logged_on_user_id'], PDO::PARAM_INT);
-				$query->execute();
+      	$db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
+       	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  			$sql = "
+            	SELECT
+            	    COUNT(*)
+            	FROM
+            	    `camagru`.`likes`
+            	WHERE
+  				        `user_id` = :user_id
+  			      AND `snap_file` = :snap_file";
+  			$query = $db->prepare($sql);
+  			$query->bindParam(':snap_file', $_POST['likeSnap'], PDO::PARAM_STR);
+  			$query->bindParam(':user_id', $_SESSION['logged_on_user_id'], PDO::PARAM_INT);
+  			$query->execute();
+        $res = $query->fetchAll(PDO::FETCH_COLUMN);
+  			if ($res[0] == 0)
+  			{
+  				$sql = "
+  				INSERT INTO
+  					`camagru`.`likes`
+  					(`snap_file`, `user_id`)
+  				VALUES
+  					(:snap_file, :user_id)";
+  				$query = $db->prepare($sql);
+  				$query->bindParam(':snap_file', $_POST['likeSnap'], PDO::PARAM_STR);
+  				$query->bindParam(':user_id', $_SESSION['logged_on_user_id'], PDO::PARAM_INT);
+  				$query->execute();
 
-				$sql = "
-				UPDATE
-					`camagru`.`snaps`
-				SET
-					`likes` = `likes` + 1
-				WHERE
-					`snap_file` = :snap_file";
-				$query = $db->prepare($sql);
-				$query->bindParam(':snap_file', $_POST['likeSnap'], PDO::PARAM_STR);
-				$query->execute();
-			}
+  				$sql = "
+  				UPDATE
+  					`camagru`.`snaps`
+  				SET
+  					`likes` = `likes` + 1
+  				WHERE
+  					`snap_file` = :snap_file";
+  				$query = $db->prepare($sql);
+  				$query->bindParam(':snap_file', $_POST['likeSnap'], PDO::PARAM_STR);
+  				$query->execute();
+  			}
     	} catch (PDOException $e) {
         	echo 'Caught Exception : ' . $e->getMessage();
     	}

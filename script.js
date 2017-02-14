@@ -1,3 +1,18 @@
+function previewFile(){
+		var file    = document.querySelector('input[type=file]').files[0];
+		var reader  = new FileReader();
+
+		reader.onloadend = function () {
+				$("#upload_img").src = reader.result;
+		}
+
+		if (file) {
+				reader.readAsDataURL(file);
+		} else {
+				$("#upload_img").src = "";
+		}
+}
+
 function selection(img) {
 	selection.img = (img === selection.img) ? null : img;
 }
@@ -25,6 +40,18 @@ function likeSnap(snap) {
 		}
 	}
 	http.send("likeSnap=" + snap);
+}
+
+function removeSnap(snap) {
+	var http = new XMLHttpRequest();
+	http.open("POST", "snap.php", true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if (http.readyState == 4 && http.status == 200) {
+			console.log (http.responseText + " removed :" + snap);
+		}
+	}
+	http.send("removeSnap=" + snap);
 }
 
 function commentSnap(comment, snap) {
@@ -117,6 +144,11 @@ function loadSnapshots(logged, page) {
 							like.innerHTML = "Like";
 							like.addEventListener("click", function(){likeSnap(snap)});
 							snap_box.appendChild (like);
+
+							var remove = document.createElement('button');
+							remove.innerHTML = "Remove";
+							remove.addEventListener("click", function(){removeSnap(snap)});
+							snap_box.appendChild (remove);
 						}
 
 						document.getElementById('snapshots').appendChild(snap_box);
@@ -134,6 +166,7 @@ function loadUserSnaps() {
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if (http.readyState == 4 && http.status == 200) {
+			console.log(http.responseText);
 			var snaps = JSON.parse(http.responseText);
 			for (var key in snaps) {
 
@@ -192,6 +225,7 @@ function useCamera() {
 				alert("Please click on an image");
 			} else {
 				var canvas = document.querySelector('canvas');
+				canvas.style.display = "none";
 				canvas.width = video.videoWidth;
 				canvas.height = video.videoHeight;
 
