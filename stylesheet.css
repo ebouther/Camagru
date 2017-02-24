@@ -140,3 +140,34 @@ body {
   display: inline-block;
   font-size: 16px;
 }
+
+.like_btn {
+    box-shadow: rgb(62, 115, 39) 0px 10px 14px -7px;
+    background: linear-gradient(rgb(119, 181, 90) 5%, rgb(116, 224, 62) 100%) rgb(119, 181, 90);
+    border-radius: 7px;
+    border: 1px solid rgb(92, 171, 53);
+    display: inline-block;
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+    font-family: Arial;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 7px 20px;
+    text-decoration: none;
+    text-shadow: rgb(91, 138, 60) 0px 1px 0px;
+}
+
+.comment_btn {
+    box-shadow: rgb(44, 126, 138) 0px 10px 14px -7px;
+    background: linear-gradient(rgb(89, 205, 247) 5%, rgb(6, 134, 181) 100%) rgb(89, 205, 247);
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+    font-family: Arial;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 7px 20px;
+    text-decoration: none;
+    text-shadow: rgb(40, 114, 138) 0px 1px 0px;
+}

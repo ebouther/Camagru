@@ -42,13 +42,14 @@ function likeSnap(snap) {
 	http.send("likeSnap=" + snap);
 }
 
-function removeSnap(snap) {
+function removeSnap(snap_div, snap) {
 	var http = new XMLHttpRequest();
 	http.open("POST", "snap.php", true);
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if (http.readyState == 4 && http.status == 200) {
 			console.log (http.responseText + " removed :" + snap);
+			snap_div.remove();
 		}
 	}
 	http.send("removeSnap=" + snap);
@@ -135,20 +136,18 @@ function loadSnapshots(logged, page) {
 							snap_box.appendChild (nb_like);
 
 							var comments = document.createElement('button');
-							comments.innerHTML = "Comments";
+							comments.innerHTML = "Comment";
+							comments.className += "comment_btn";
 							comments.onclick = function(){window.location = "index.php?snap=" + snap};
 
 							snap_box.appendChild (comments);
 
 							var like = document.createElement('button');
 							like.innerHTML = "Like";
+							like.className += "like_btn";
 							like.addEventListener("click", function(){likeSnap(snap)});
 							snap_box.appendChild (like);
 
-							var remove = document.createElement('button');
-							remove.innerHTML = "Remove";
-							remove.addEventListener("click", function(){removeSnap(snap)});
-							snap_box.appendChild (remove);
 						}
 
 						document.getElementById('snapshots').appendChild(snap_box);
@@ -170,11 +169,19 @@ function loadUserSnaps() {
 			var snaps = JSON.parse(http.responseText);
 			for (var key in snaps) {
 
+				var snap_div = document.createElement('div');
+				
 				var new_snap = document.createElement('img');
 				new_snap.style = "width: 100%";
 				new_snap.src = "photos/" + snaps[key];
-
-				document.getElementById('snapshots').appendChild(new_snap);
+				snap_div.appendChild(new_snap);
+				
+				var rm_button = document.createElement('button');
+				rm_button.innerHTML = "Remove";
+				rm_button.addEventListener("click", function(){removeSnap(snap_div, snaps[key])});
+				snap_div.appendChild (rm_button);
+				
+				document.getElementById('snapshots').appendChild(snap_div);
 			}
 		}
 	}
@@ -236,11 +243,26 @@ function useCamera() {
 				http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 				http.onreadystatechange = function() {
 					if (http.readyState == 4 && http.status == 200) {
+						
+						
+						
+						var snap_div = document.createElement('div');
+				
 						var new_snap = document.createElement('img');
-						new_snap.src = http.responseText;
 						new_snap.style = "width: 100%";
+						new_snap.src = http.responseText;
+						
+						console.log("NEW SNAP: " + http.responseText);
+						
+						snap_div.appendChild(new_snap);
+						
+						var rm_button = document.createElement('button');
+						rm_button.innerHTML = "Remove";
+						rm_button.addEventListener("click", function(){removeSnap(snap_div, http.responseText.substr(9))});
+						snap_div.appendChild (rm_button);
+						
 						var snapshots = document.getElementById('snapshots');
-						snapshots.insertBefore(new_snap, snapshots.childNodes[0]);
+						snapshots.insertBefore(snap_div, snapshots.childNodes[0]);
 					}
 				}
 				http.send("snap=" + encodeURIComponent(canvas.toDataURL('image/png')) + "&img=" + selection.img);

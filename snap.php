@@ -36,29 +36,34 @@
     	}
 
 	} else if ($_POST['user_snaps'] && $_SESSION['logged_on_user']) {
+		if (!file_exists('./photos')) {
+			mkdir('./photos', 0666);
+		}
 		$files = array_reverse (preg_grep ('~^[0-9]*-' . $_SESSION['logged_on_user'] . '\.(png)$~', scandir("./photos/")));
 		echo json_encode($files);
 
-  } else if (!empty($_POST['removeSnap']) && $_SESSION['logged_on_user']) {
+	} else if (!empty($_POST['removeSnap']) && $_SESSION['logged_on_user']) {
 		if (preg_match('~^[0-9]+(-)(.+)(.png)~', $_POST['removeSnap'], $m) !== null) {
-      if ($m[2] === $_SESSION['logged_on_user']) {
-        try {
-        $db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = "
-          DELETE FROM
-            `camagru`.`snaps`
-          WHERE
-            `snaps`.`snap_file` = :snap
-          ";
-
-        $query = $db->prepare($sql);
-        $query->bindParam(':snap', $snap, PDO::PARAM_STR);
-        $query->execute();
-        } catch (PDOException $e) {
-            echo 'Caught Exception : ' . $e->getMessage();
-        }
-      }
+    	if ($m[2] === $_SESSION['logged_on_user']) {
+	    	try {
+		        $db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
+		        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		        $sql = "
+		          DELETE FROM
+		            `camagru`.`snaps`
+		          WHERE
+		            `snaps`.`snap_file` = :snap
+		          ";
+		
+		        $query = $db->prepare($sql);
+		        $query->bindParam(':snap', $_POST['removeSnap'], PDO::PARAM_STR);
+		        $query->execute();
+		        unlink('./photos/' . $_POST['removeSnap']);
+		        
+		    } catch (PDOException $e) {
+		            echo 'Caught Exception : ' . $e->getMessage();
+		    }
+		}
         //remove_snap($_POST['removeSnap']);
     }
 
