@@ -5,8 +5,8 @@ include './functions.php';
 
 if ($_POST['submit'] === "OK") {
 	if (!empty($_POST['login']) && !empty($_POST['passwd']) && !empty($_POST['email'])) {
-		if (strlen ($_POST['login']) > 8 && !secure_pass($_POST['passwd'])) {
-			echo "Login too long (8 char max)";
+		if (strlen ($_POST['login']) > 8 || !secure_pass($_POST['passwd'])) {
+			echo "Login too long (8 char max) or password not secure (has to contain at least an uppercase letter and a number)";
 		} else {
 			try {
 				$db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);

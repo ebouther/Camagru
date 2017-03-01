@@ -46,7 +46,7 @@
   }
 
   function secure_pass($pass) {
-	  if (strlen($pass) >= 6 && preg_match('/[A-Z]+[a-z]+[0-9]+/', $pass))
+	  if (strlen($pass) >= 6 && preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', $pass))
 		  return true;
 	  return false;
   }
