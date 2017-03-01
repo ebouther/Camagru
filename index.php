@@ -33,7 +33,7 @@
 		} else if (isset ($_GET['snap'])) {
 			?>
 				useTemplate(t_aside_gallery, "aside");
-				getComments("<?php echo $_GET['snap']; ?>", function (template){
+				getComments("<?php echo $_GET['snap']; ?>", function (template) {
 					useTemplate(template, "body");
 				});
 			<?php

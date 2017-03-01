@@ -7,12 +7,13 @@
 	{
 		$snap = base64_decode(explode(',', $_POST['snap'])[1]);
 		$fd = fopen("tmp.png" , 'w+b');
-   	fwrite($fd, $snap);
-   	fclose($fd);
+	   	fwrite($fd, $snap);
+	   	fclose($fd);
 		$dest = imagecreatefrompng("./tmp.png");
 		$src = imagecreatefrompng("img/" . $_POST['img']);
-		$size = getimagesize("img/" . $_POST['img']);
-		imagecopy($dest, $src, 0, 0, 0, 0, $size[0], $size[1]);
+		$size = getimagesize("./tmp.png");
+		$size2 = getimagesize("img/" . $_POST['img']);
+		imagecopyresized($dest, $src, 0, 0, 0, 0, $size[0], $size[1], $size2[0], $size2[1]);
 		$file =  time() . "-" . $_SESSION['logged_on_user'] . ".png";
 		imagepng($dest, "./photos/" . $file);
 
@@ -58,7 +59,8 @@
 		        $query = $db->prepare($sql);
 		        $query->bindParam(':snap', $_POST['removeSnap'], PDO::PARAM_STR);
 		        $query->execute();
-		        unlink('./photos/' . $_POST['removeSnap']);
+		        if (file_exists('./photos/' . $_POST['removeSnap']))
+		        	unlink('./photos/' . $_POST['removeSnap']);
 		        
 		    } catch (PDOException $e) {
 		            echo 'Caught Exception : ' . $e->getMessage();
@@ -68,7 +70,7 @@
     }
 
 	} else if (!empty($_POST['snapshots'])) {
-		$files = array_reverse (preg_grep('~^[0-9]+(-' . $_SESSION['logged_on_user'] . ')\.(png)$~', scandir("./photos/")));
+		$files = array_reverse (scandir("./photos/"));
 		echo json_encode(array_slice($files, $_POST['page'] * 5, $_POST['page'] * 5 + 5));
 
 	} else if ($_POST['getSnapLikes'] && $_SESSION['logged_on_user']) {
@@ -175,9 +177,9 @@
 			$sql = "
           	SELECT *
           	FROM
-          	    `camagru`.`comments`
+        		`camagru`.`comments`
           	WHERE
-				        `snap_file` = :snap_file";
+				`snap_file` = :snap_file";
 			$query = $db->prepare($sql);
 			$query->bindParam(':snap_file', $_POST['getComments'], PDO::PARAM_STR);
 			$query->execute();

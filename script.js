@@ -1,16 +1,19 @@
-function previewFile(){
-		var file    = document.querySelector('input[type=file]').files[0];
-		var reader  = new FileReader();
 
-		reader.onloadend = function () {
-				$("#upload_img").src = reader.result;
-		}
+function previewFile() {
+	var file    = document.querySelector('input[type=file]').files[0];
+	var reader  = new FileReader();
 
-		if (file) {
-				reader.readAsDataURL(file);
-		} else {
-				$("#upload_img").src = "";
-		}
+	reader.onloadend = function () {
+		document.getElementById("video").style.background = "transparent url('" + reader.result + "') no-repeat 0 0";
+		document.getElementById("video").style.backgroundSize = "100% 100%";
+	}
+
+	if (file) {
+			reader.readAsDataURL(file);
+	} else {
+			document.getElementById("video").style.background = "transparent url('img/mask.png') no-repeat 0 0";
+			document.getElementById("video").style.backgroundSize = "100% 100%";
+	}
 }
 
 function selection(img) {
@@ -107,6 +110,7 @@ function getComments(snap, cb) {
 }
 
 function loadSnapshots(logged, page) {
+	console.log("Load page : " + page);
 	var http = new XMLHttpRequest();
 	http.open("POST", "snap.php", true);
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -147,7 +151,6 @@ function loadSnapshots(logged, page) {
 							like.className += "like_btn";
 							like.addEventListener("click", function(){likeSnap(snap)});
 							snap_box.appendChild (like);
-
 						}
 
 						document.getElementById('snapshots').appendChild(snap_box);
@@ -167,7 +170,7 @@ function loadUserSnaps() {
 		if (http.readyState == 4 && http.status == 200) {
 			console.log(http.responseText);
 			var snaps = JSON.parse(http.responseText);
-			for (var key in snaps) {
+			for (let key in snaps) {
 
 				var snap_div = document.createElement('div');
 				
@@ -197,6 +200,49 @@ function useTemplate(template, id) {
 		eval(arr[n].innerHTML);
 }
 
+var current_page = 0;
+
+function loadPage(direction) {
+	
+	document.getElementById("snapshots").innerHTML = '';
+	
+	if (direction === "prev")
+	 {
+	 	loadSnapshots(true, current_page - 1 < 0 ? 0 : --current_page);
+	 } else {
+	 	loadSnapshots(true, ++current_page);
+	 }
+}
+
+function sendSnap(data) {
+	var http = new XMLHttpRequest();
+	http.open("POST", "snap.php", true);
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function() {
+		if (http.readyState == 4 && http.status == 200) {
+			
+			var snap_div = document.createElement('div');
+	
+			var new_snap = document.createElement('img');
+			new_snap.style = "width: 100%";
+			new_snap.src = http.responseText;
+			
+			console.log("NEW SNAP: " + http.responseText);
+			
+			snap_div.appendChild(new_snap);
+			
+			var rm_button = document.createElement('button');
+			rm_button.innerHTML = "Remove";
+			rm_button.addEventListener("click", function(){removeSnap(snap_div, http.responseText.substr(9))});
+			snap_div.appendChild (rm_button);
+			
+			var snapshots = document.getElementById('snapshots');
+			snapshots.insertBefore(snap_div, snapshots.childNodes[0]);
+		}
+	}
+	http.send(data);
+}
+
 function useCamera() {
 	window.addEventListener("DOMContentLoaded", function() {
 		var video = document.getElementById("video");
@@ -220,9 +266,7 @@ function useCamera() {
 				}
 				video.play();
 			},
-			function(err) {
-				console.log("ERROR: " + err);
-			}
+			function(err) {}
 		);
 
 		video.play();
@@ -232,40 +276,20 @@ function useCamera() {
 				alert("Please click on an image");
 			} else {
 				var canvas = document.querySelector('canvas');
+				var base_64;
+				
 				canvas.style.display = "none";
 				canvas.width = video.videoWidth;
 				canvas.height = video.videoHeight;
-
-				canvas.getContext('2d').drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-
-				var http = new XMLHttpRequest();
-				http.open("POST", "snap.php", true);
-				http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-				http.onreadystatechange = function() {
-					if (http.readyState == 4 && http.status == 200) {
-						
-						
-						
-						var snap_div = document.createElement('div');
 				
-						var new_snap = document.createElement('img');
-						new_snap.style = "width: 100%";
-						new_snap.src = http.responseText;
-						
-						console.log("NEW SNAP: " + http.responseText);
-						
-						snap_div.appendChild(new_snap);
-						
-						var rm_button = document.createElement('button');
-						rm_button.innerHTML = "Remove";
-						rm_button.addEventListener("click", function(){removeSnap(snap_div, http.responseText.substr(9))});
-						snap_div.appendChild (rm_button);
-						
-						var snapshots = document.getElementById('snapshots');
-						snapshots.insertBefore(snap_div, snapshots.childNodes[0]);
-					}
-				}
-				http.send("snap=" + encodeURIComponent(canvas.toDataURL('image/png')) + "&img=" + selection.img);
+				navigator.getMedia({video: true}, function() {
+					canvas.getContext('2d').drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+					sendSnap("snap=" + encodeURIComponent(canvas.toDataURL('image/png')) + "&img=" + selection.img);
+					cam_enabled = true;
+				}, function() {
+					base_64 = video.style.background.match(/url\(["|']?([^"']*)["|']?\)/)[1];
+					sendSnap("snap=" + encodeURIComponent(base_64) + "&img=" + selection.img);
+				});
 			}
 		});
 	}, false);

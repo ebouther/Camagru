@@ -27,19 +27,18 @@ var t_aside_create = document.createElement("div");
 t_aside_create.innerHTML = "<input class=\"aside_btn\" type=\"button\" onclick=\"javascript:useTemplate(t_login.cloneNode (true), 'body');\" value=\"Log in.\" />";
 
 var t_images = document.createElement("div");
-t_images.innerHTML = "<img src='img/mask.png' class='accessories' onclick='javascript:selection(\"mask.png\")'> \
+t_images.innerHTML = "<img src='img/cadre2.png' class='accessories' onclick='javascript:selection(\"cadre2.png\")'> \
 <img src='img/glasses.png' class='accessories' onclick='javascript:selection(\"glasses.png\")'> \
-<img src='img/cigaret.png' class='accessories' onclick='javascript:selection(\"cigaret.png\")'> \
-<img src='img/hat.png' class='accessories' onclick='javascript:selection(\"hat.png\")'> \
-<img src='img/chain.png' class='accessories' onclick='javascript:selection(\"chain.png\")'> \
+<img src='img/cadre1.png' class='accessories' onclick='javascript:selection(\"cadre1.png\")'> \
+<img src='img/leaves.png' class='accessories' onclick='javascript:selection(\"leaves.png\")'> \
+<img src='img/sumo.png' class='accessories' onclick='javascript:selection(\"sumo.png\")'> \
 ";
 
 var t_camera = document.createElement("div");
-t_camera.innerHTML = "<button class=\"aside_btn\" id=\"snap\">Snap Photo</button> \
-  <video id=\"video\" autoplay=\"\"> \
-    <img id=\"upload_img\" /> \
-  </video> \
-  <input type=\"file\" onchange=\"previewFile()\"><br> \
+t_camera.innerHTML = "<img id=\"upload_img\" /> \
+  <video id=\"video\" autoplay=\"\"></video> \
+  <button class=\"aside_btn\" id=\"snap\">Snap Photo</button> \
+  <input type=\"file\" onchange=\"previewFile()\" accept=\"image/*\"> \
 	<canvas></canvas> \
   <div id=\"images\"></div> \
   <script> \
@@ -108,11 +107,15 @@ t_aside_public_gallery.innerHTML = "<input class=\"aside_btn\" type=\"button\" o
 
 var t_gallery = document.createElement("div");
 t_gallery.innerHTML = "<div id='snapshots'></div> \
+  <input id=\"prev_page\" class=\"aside_btn\" type=\"button\" onclick=\"javascript:loadPage('prev')\" value=\"Previous\" /> \
+  <input id=\"next_page\" class=\"aside_btn\" type=\"button\" onclick=\"javascript:loadPage('next')\" value=\"Next\" /> \
   <script>loadSnapshots(true, 0); \
   </script>";
 
 var t_public_gallery = document.createElement("div");
 t_public_gallery.innerHTML = "<div id='snapshots'></div> \
+  <input id=\"prev_page\" class=\"aside_btn\" type=\"button\" onclick=\"javascript:loadPage('prev')\" value=\"Previous\" /> \
+  <input id=\"next_page\" class=\"aside_btn\" type=\"button\" onclick=\"javascript:loadPage('next')\" value=\"Next\" /> \
   <script>loadSnapshots(false, 0); \
   </script>";
 

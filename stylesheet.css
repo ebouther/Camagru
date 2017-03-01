@@ -20,6 +20,7 @@ body {
 }
 
 #body {
+   text-align: center;
    float: left;
    vertical-align: top;
    padding-bottom:60px;
@@ -51,12 +52,18 @@ body {
   height: auto;
 }
 #video {
-  width: 100%;
+    width: 100%;
+    background: transparent url('') no-repeat 0 0; 
+   -webkit-background-size: 100% 100%; 
+   -moz-background-size: 100% 100%; 
+   -o-background-size: 100% 100%; 
+   background-size: 100% 100%; 
 }
 
 #snap {
   text-align: center;
 }
+
 
 .snap_box {
 	box-shadow: 10px 10px 5px #888888;
