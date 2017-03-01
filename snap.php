@@ -38,7 +38,7 @@
 
 	} else if ($_POST['user_snaps'] && $_SESSION['logged_on_user']) {
 		if (!file_exists('./photos')) {
-			mkdir('./photos', 0666);
+			mkdir('./photos', 0777);
 		}
 		$files = array_reverse (preg_grep ('~^[0-9]*-' . $_SESSION['logged_on_user'] . '\.(png)$~', scandir("./photos/")));
 		echo json_encode($files);

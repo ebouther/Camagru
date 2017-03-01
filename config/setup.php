@@ -7,7 +7,11 @@
       $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       if (isset($_GET['delete'])) {
         $sql = 'DROP DATABASE camagru;';
-      } else {
+	  } else {
+
+	  if (!file_exists('./photos'))
+	  	mkdir('./photos', 0777);
+
       $sql = '
         CREATE DATABASE IF NOT EXISTS camagru;
         USE camagru;
