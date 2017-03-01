@@ -58,7 +58,7 @@ t_aside_modify.innerHTML = "<input class=\"aside_btn\" type=\"button\" onclick=\
 var t_create_user = document.createElement("div");
 t_create_user.innerHTML = "<form class=\"form-login\" action=\"./create.php\" method=\"post\"> \
         <h1>Create an account</h1> \
-        <input type=\"text\" name=\"login\" placeholder=\"Login\"/> \
+        <input type=\"text\" name=\"login\" placeholder=\"Login\" /> \
         <br /> \
         <input type=\"password\" name=\"passwd\" placeholder=\"Password\" /> \
         <br /> \
@@ -69,14 +69,15 @@ t_create_user.innerHTML = "<form class=\"form-login\" action=\"./create.php\" me
 
 var t_forgot_pass = document.createElement("div");
 t_forgot_pass.innerHTML = "<form class=\"form-login\" action=\"./pass.php\" method=\"post\"> \
-    Login: <input type=\"text\" name=\"login\" /> \
+    <h1>Login</h1> \
+    <input type=\"text\" name=\"login\" placeholder=\"Login\" /> \
     <input type=\"submit\" value=\"OK\" name=\"submit\"/> \
   </form> \
   <script>useTemplate(t_aside_modify.cloneNode (true), 'aside_buttons');</script>";
 
 var t_change_passwd = document.createElement("div");
 t_change_passwd.innerHTML = "<form class=\"form-login\" action=\"./modif.php\" method=\"post\"> \
-    Login: <input type=\"text\" name=\"login\" /> \
+    <input type=\"text\" name=\"login\" placeholder=\"Login\" /> \
     <br /> \
     Old pass: <input type=\"text\" name=\"oldpw\" /> \
     <br /> \

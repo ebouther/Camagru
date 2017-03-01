@@ -34,7 +34,7 @@
   {
 	parse_str(parse_url($_POST['url'], PHP_URL_QUERY), $url_args);
 	if (!secure_pass($_POST['new_pass']))
-		echo "Password has to be at least 6 characters long and contain an uppercase, a lowercase and a number."
+		echo "Password has to be at least 6 characters long and contain an uppercase, a lowercase and a number.";
     try {
         $db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
