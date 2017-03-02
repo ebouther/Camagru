@@ -52,6 +52,7 @@ function removeSnap(snap_div, snap) {
 	http.onreadystatechange = function() {
 		if (http.readyState == 4 && http.status == 200) {
 			console.log (http.responseText + " removed :" + snap);
+			console.log("REMOVE : " + snap_div);
 			snap_div.remove();
 		}
 	}
@@ -171,20 +172,21 @@ function loadUserSnaps() {
 			console.log(http.responseText);
 			var snaps = JSON.parse(http.responseText);
 			for (let key in snaps) {
-
-				var snap_div = document.createElement('div');
-				
-				var new_snap = document.createElement('img');
-				new_snap.style = "width: 100%";
-				new_snap.src = "photos/" + snaps[key];
-				snap_div.appendChild(new_snap);
-				
-				var rm_button = document.createElement('button');
-				rm_button.innerHTML = "Remove";
-				rm_button.addEventListener("click", function(){removeSnap(snap_div, snaps[key])});
-				snap_div.appendChild (rm_button);
-				
-				document.getElementById('snapshots').appendChild(snap_div);
+				(function () {
+					var snap_div = document.createElement('div');
+					
+					var new_snap = document.createElement('img');
+					new_snap.style = "width: 100%";
+					new_snap.src = "photos/" + snaps[key];
+					snap_div.appendChild(new_snap);
+					
+					var rm_button = document.createElement('button');
+					rm_button.innerHTML = "Remove";
+					rm_button.addEventListener("click", function(){removeSnap(snap_div, snaps[key])});
+					snap_div.appendChild (rm_button);
+					
+					document.getElementById('snapshots').appendChild(snap_div);
+				} ());
 			}
 		}
 	}
