@@ -10,22 +10,21 @@
 	   	fwrite($fd, $snap);
 	   	fclose($fd);
 
-			$dest = imagecreatefrompng("./tmp.png");
-			$src = imagecreatefrompng("img/" . $_POST['img']);
-			$size = getimagesize("./tmp.png");
-			$size2 = getimagesize("img/" . $_POST['img']);
-			try {
-				imagecopyresized($dest, $src, 0, 0, 0, 0, $size[0], $size[1], $size2[0], $size2[1]);
-			} catch (Exception $e) {
-	   			null;
-	   		}
-			$file =  time() . "-" . $_SESSION['logged_on_user'] . ".png";
-			
-			try {
-				imagepng($dest, "./photos/" . $file);
-			} catch (Exception $e) {
-	   			null;
-	   		}
+		$dest = @imagecreatefrompng("./tmp.png");
+
+		$src = @imagecreatefrompng("img/" . $_POST['img']);
+
+		$size = @getimagesize("./tmp.png");
+
+		$size2 = @getimagesize("img/" . $_POST['img']);
+
+		@imagecopyresized($dest, $src, 0, 0, 0, 0, $size[0], $size[1], $size2[0], $size2[1]);
+
+		$file =  time() . "-" . $_SESSION['logged_on_user'] . ".png";
+		
+		@imagepng($dest, "./photos/" . $file);
+
+		if (file_exists ("./photos/" . $file))
 			echo "./photos/" . $file;
 
 

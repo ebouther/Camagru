@@ -226,7 +226,7 @@ function sendSnap(data) {
 	http.open("POST", "snap.php", true);
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
-		if (http.readyState == 4 && http.status == 200) {
+		if (http.readyState == 4 && http.status == 200 && http.responseText !== "") {
 			
 			var snap_div = document.createElement('div');
 	
@@ -254,27 +254,6 @@ function useCamera() {
 	window.addEventListener("DOMContentLoaded", function() {
 		var video = document.getElementById("video");
 
-		//navigator.getMedia = (navigator.getUserMedia ||
-		//	navigator.webkitGetUserMedia ||
-		//		navigator.mozGetUserMedia ||
-		//		navigator.msGetUserMedia);
-
-		//navigator.getMedia(
-		//	{
-		//		video: true,
-		//		audio: false
-		//	},
-		//	function(stream) {
-		//		if (navigator.mozGetUserMedia) {
-		//			video.mozSrcObject = stream;
-		//		} else {
-		//			var vendorURL = window.URL || window.webkitURL;
-		//			video.src = vendorURL ? vendorURL.createObjectURL(stream) : stream;
-		//		}
-		//		video.play();
-		//	},
-		//	function(err) {}
-		//);
 
 		navigator.mediaDevices.getUserMedia({video: true, audio: false})
 		.then(function(mediaStream) {
@@ -283,7 +262,10 @@ function useCamera() {
 			  video.onloadedmetadata = function(e) {
 				      video.play();
 				    };
+		}).catch(function(err) {
+			null;
 		});
+
 
 		video.play();
 
