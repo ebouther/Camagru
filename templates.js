@@ -28,7 +28,6 @@ t_aside_create.innerHTML = "<input class=\"aside_btn\" type=\"button\" onclick=\
 
 var t_images = document.createElement("div");
 t_images.innerHTML = "<img src='img/cadre2.png' class='accessories' onclick='javascript:selection(\"cadre2.png\")'> \
-<img src='img/glasses.png' class='accessories' onclick='javascript:selection(\"glasses.png\")'> \
 <img src='img/cadre1.png' class='accessories' onclick='javascript:selection(\"cadre1.png\")'> \
 <img src='img/leaves.png' class='accessories' onclick='javascript:selection(\"leaves.png\")'> \
 <img src='img/sumo.png' class='accessories' onclick='javascript:selection(\"sumo.png\")'> \
@@ -37,9 +36,14 @@ t_images.innerHTML = "<img src='img/cadre2.png' class='accessories' onclick='jav
 var t_camera = document.createElement("div");
 t_camera.innerHTML = "<img id=\"upload_img\" /> \
   <video id=\"video\" autoplay=\"\"></video> \
+  <br> \
+  <br> \
+  <input type=\"file\" onchange=\"previewFile()\" accept=\"image/*\"><br> \
+  <br> \
   <button class=\"aside_btn\" id=\"snap\">Snap Photo</button> \
-  <input type=\"file\" onchange=\"previewFile()\" accept=\"image/*\"> \
-	<canvas></canvas> \
+  <br> \
+  <br> \
+  <canvas></canvas> \
   <div id=\"images\"></div> \
   <script> \
   	useTemplate(t_aside_logged.cloneNode (true), 'aside_buttons'); \
@@ -75,17 +79,6 @@ t_forgot_pass.innerHTML = "<form class=\"form-login\" action=\"./pass.php\" meth
   </form> \
   <script>useTemplate(t_aside_modify.cloneNode (true), 'aside_buttons');</script>";
 
-var t_change_passwd = document.createElement("div");
-t_change_passwd.innerHTML = "<form class=\"form-login\" action=\"./modif.php\" method=\"post\"> \
-    <input type=\"text\" name=\"login\" placeholder=\"Login\" /> \
-    <br /> \
-    Old pass: <input type=\"text\" name=\"oldpw\" /> \
-    <br /> \
-    New pass: <input type=\"text\" name=\"newpw\" /> \
-    <input type=\"submit\" value=\"OK\" name=\"submit\"/> \
-  </form> \
-  <script>useTemplate(t_aside_modify.cloneNode (true), 'aside_buttons');</script>";
-
 var t_aside = document.createElement("div");
 t_aside.innerHTML = "<input class=\"aside_btn\" type=\"button\" onclick=\"javascript:useTemplate(t_create_user.cloneNode (true), 'body');\" value=\"Create an account.\" /></br> \
   <input class=\"aside_btn\" type=\"button\" onclick=\"javascript:useTemplate(t_forgot_pass.cloneNode (true), 'body');\" value=\"Forgot your password ?\" /></br> \
@@ -93,7 +86,6 @@ t_aside.innerHTML = "<input class=\"aside_btn\" type=\"button\" onclick=\"javasc
 
 var t_aside_logged = document.createElement("div");
 t_aside_logged.innerHTML = "<input class=\"aside_btn\" type=\"button\" onclick=\"location.href='./logout.php';\" value=\"Disconnect\" /></br> \
-  <input class=\"aside_btn\" type=\"button\" onclick=\"javascript:useTemplate(t_change_passwd.cloneNode (true), 'body');\" value=\"Modify your password.\"/> </br> \
   <input class=\"aside_btn\" type=\"button\" onclick=\"location.href='index.php?gallery'\" value=\"Gallery\" /> \
   <div id='snapshots'></div> \
   <script>loadUserSnaps()</script>";

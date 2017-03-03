@@ -51,6 +51,7 @@ body {
   width: auto;
   height: auto;
 }
+
 #video {
     width: 100%;
     background: transparent url('') no-repeat 0 0; 
@@ -62,6 +63,10 @@ body {
 
 #snap {
   text-align: center;
+}
+
+canvas {
+    display: none;
 }
 
 

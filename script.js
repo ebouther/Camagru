@@ -27,7 +27,7 @@ function getSnapLikes(snap, cb) {
 	http.onreadystatechange = function() {
 		if (http.readyState == 4 && http.status == 200) {
 			cb(http.responseText);
-			console.log (http.responseText + " likes - " + snap);
+			//console.log (http.responseText + " likes - " + snap);
 		}
 	}
 	http.send("getSnapLikes=" + snap);
@@ -38,9 +38,9 @@ function likeSnap(snap) {
 	http.open("POST", "snap.php", true);
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
-		if (http.readyState == 4 && http.status == 200) {
-			console.log (http.responseText + " liked :" + snap);
-		}
+		//if (http.readyState == 4 && http.status == 200) {
+		//	console.log (http.responseText + " liked :" + snap);
+		//}
 	}
 	http.send("likeSnap=" + snap);
 }
@@ -51,8 +51,8 @@ function removeSnap(snap_div, snap) {
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if (http.readyState == 4 && http.status == 200) {
-			console.log (http.responseText + " removed :" + snap);
-			console.log("REMOVE : " + snap_div);
+//			console.log (http.responseText + " removed :" + snap);
+//			console.log("REMOVE : " + snap_div);
 			snap_div.remove();
 		}
 	}
@@ -64,10 +64,10 @@ function commentSnap(comment, snap) {
 	http.open("POST", "snap.php", true);
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
-		console.log(http.responseText);
-		if (http.readyState == 4 && http.status == 200) {
-			console.log ("comment :" + comment + "   snap:" + snap);
-		}
+//		console.log(http.responseText);
+//		if (http.readyState == 4 && http.status == 200) {
+//			console.log ("comment :" + comment + "   snap:" + snap);
+//		}
 	}
 	http.send("commentSnap=" + comment + "&snap_file=" + snap);
 }
@@ -111,13 +111,13 @@ function getComments(snap, cb) {
 }
 
 function loadSnapshots(logged, page) {
-	console.log("Load page : " + page);
+//	console.log("Load page : " + page);
 	var http = new XMLHttpRequest();
 	http.open("POST", "snap.php", true);
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if (http.readyState == 4 && http.status == 200) {
-			console.log(http.responseText);
+//			console.log(http.responseText);
 			var snaps = JSON.parse(http.responseText);
 
 			for (var key in snaps) {
@@ -169,7 +169,7 @@ function loadUserSnaps() {
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if (http.readyState == 4 && http.status == 200) {
-			console.log(http.responseText);
+//			console.log(http.responseText);
 			var snaps = JSON.parse(http.responseText);
 			for (let key in snaps) {
 				(function () {
@@ -229,7 +229,7 @@ function sendSnap(data) {
 			new_snap.style = "width: 100%";
 			new_snap.src = http.responseText;
 			
-			console.log("NEW SNAP: " + http.responseText);
+//			console.log("NEW SNAP: " + http.responseText);
 			
 			snap_div.appendChild(new_snap);
 			
@@ -274,9 +274,7 @@ function useCamera() {
 		video.play();
 
 		document.getElementById("snap").addEventListener("click", function() {
-			if (selection.img === null || selection.img === undefined) {
-				alert("Please click on an image");
-			} else {
+			if (!(selection.img === null || selection.img === undefined)) {
 				var canvas = document.querySelector('canvas');
 				var base_64;
 				
@@ -296,3 +294,5 @@ function useCamera() {
 		});
 	}, false);
 }
+
+

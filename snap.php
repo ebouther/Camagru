@@ -9,15 +9,25 @@
 		$fd = fopen("tmp.png" , 'w+b');
 	   	fwrite($fd, $snap);
 	   	fclose($fd);
-		$dest = imagecreatefrompng("./tmp.png");
-		$src = imagecreatefrompng("img/" . $_POST['img']);
-		$size = getimagesize("./tmp.png");
-		$size2 = getimagesize("img/" . $_POST['img']);
-		imagecopyresized($dest, $src, 0, 0, 0, 0, $size[0], $size[1], $size2[0], $size2[1]);
-		$file =  time() . "-" . $_SESSION['logged_on_user'] . ".png";
-		imagepng($dest, "./photos/" . $file);
 
-		echo "./photos/" . $file;
+			$dest = imagecreatefrompng("./tmp.png");
+			$src = imagecreatefrompng("img/" . $_POST['img']);
+			$size = getimagesize("./tmp.png");
+			$size2 = getimagesize("img/" . $_POST['img']);
+			try {
+				imagecopyresized($dest, $src, 0, 0, 0, 0, $size[0], $size[1], $size2[0], $size2[1]);
+			} catch (Exception $e) {
+	   			null;
+	   		}
+			$file =  time() . "-" . $_SESSION['logged_on_user'] . ".png";
+			
+			try {
+				imagepng($dest, "./photos/" . $file);
+			} catch (Exception $e) {
+	   			null;
+	   		}
+			echo "./photos/" . $file;
+
 
     	try {
         	$db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
@@ -33,7 +43,7 @@
 			$query->bindParam(':user_id', $_SESSION['logged_on_user_id'], PDO::PARAM_INT);
 			$query->execute();
     	} catch (PDOException $e) {
-        	echo 'Caught Exception : ' . $e->getMessage();
+        	null;
     	}
 
 	} else if ($_POST['user_snaps'] && $_SESSION['logged_on_user']) {
@@ -162,8 +172,8 @@
   			VALUES
   				(:comment, :login, :timestamp, :snap_file)";
   			$query = $db->prepare($sql);
-  			$query->bindParam(':comment', $_POST['commentSnap'], PDO::PARAM_STR);
-  			$query->bindParam(':login', $_SESSION['logged_on_user'], PDO::PARAM_STR);
+  			$query->bindParam(':comment', htmlspecialchars($_POST['commentSnap']), PDO::PARAM_STR);
+  			$query->bindParam(':login', htmlspecialchars($_SESSION['logged_on_user']), PDO::PARAM_STR);
   			$query->bindParam(':timestamp', time(), PDO::PARAM_INT);
   			$query->bindParam(':snap_file', $_POST['snap_file'], PDO::PARAM_STR);
   			$query->execute();
