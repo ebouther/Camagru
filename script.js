@@ -117,7 +117,8 @@ function loadSnapshots(logged, page) {
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if (http.readyState == 4 && http.status == 200) {
-			var snaps = JSON.parse(http.responseText);
+			if (http.responseText !== "")
+				var snaps = JSON.parse(http.responseText);
 
 			for (var key in snaps) {
 					(function (snap) {
@@ -129,6 +130,11 @@ function loadSnapshots(logged, page) {
 						new_snap.src = "photos/" + snap;
 
 						snap_box.appendChild (new_snap);
+
+						var fb_like = document.createElement('div');
+						fb_like.innerHTML = "<iframe src=\"https://www.facebook.com/plugins/like.php?href=" + window.location.href.split('?')[0] + "?snap=" + snap + "&width=450&layout=standard&action=like&show_faces=true&height=80&appId\" width=\"450\" height=\"80\" style=\"border:none;overflow:hidden\" scrolling=\"no\" frameborder=\"0\" allowTransparency=\"true\"></iframe>"
+
+						snap_box.appendChild (fb_like);
 
 						if (logged)
 						{
@@ -248,27 +254,36 @@ function useCamera() {
 	window.addEventListener("DOMContentLoaded", function() {
 		var video = document.getElementById("video");
 
-		navigator.getMedia = (navigator.getUserMedia ||
-			navigator.webkitGetUserMedia ||
-				navigator.mozGetUserMedia ||
-				navigator.msGetUserMedia);
+		//navigator.getMedia = (navigator.getUserMedia ||
+		//	navigator.webkitGetUserMedia ||
+		//		navigator.mozGetUserMedia ||
+		//		navigator.msGetUserMedia);
 
-		navigator.getMedia(
-			{
-				video: true,
-				audio: false
-			},
-			function(stream) {
-				if (navigator.mozGetUserMedia) {
-					video.mozSrcObject = stream;
-				} else {
-					var vendorURL = window.URL || window.webkitURL;
-					video.src = vendorURL ? vendorURL.createObjectURL(stream) : stream;
-				}
-				video.play();
-			},
-			function(err) {}
-		);
+		//navigator.getMedia(
+		//	{
+		//		video: true,
+		//		audio: false
+		//	},
+		//	function(stream) {
+		//		if (navigator.mozGetUserMedia) {
+		//			video.mozSrcObject = stream;
+		//		} else {
+		//			var vendorURL = window.URL || window.webkitURL;
+		//			video.src = vendorURL ? vendorURL.createObjectURL(stream) : stream;
+		//		}
+		//		video.play();
+		//	},
+		//	function(err) {}
+		//);
+
+		navigator.mediaDevices.getUserMedia({video: true, audio: false})
+		.then(function(mediaStream) {
+			  var video = document.querySelector('video');
+			  video.srcObject = mediaStream;
+			  video.onloadedmetadata = function(e) {
+				      video.play();
+				    };
+		});
 
 		video.play();
 
@@ -280,12 +295,13 @@ function useCamera() {
 				canvas.style.display = "none";
 				canvas.width = video.videoWidth;
 				canvas.height = video.videoHeight;
-				
-				navigator.getMedia({video: true}, function() {
+
+				navigator.mediaDevices.getUserMedia({video: true, audio: false})
+				.then(function(mediaStream) {
 					canvas.getContext('2d').drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
 					sendSnap("snap=" + encodeURIComponent(canvas.toDataURL('image/png')) + "&img=" + selection.img);
 					cam_enabled = true;
-				}, function() {
+				}).catch(function(err) {
 					base_64 = video.style.background.match(/url\(["|']?([^"']*)["|']?\)/)[1];
 					sendSnap("snap=" + encodeURIComponent(base_64) + "&img=" + selection.img);
 				});

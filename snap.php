@@ -81,8 +81,7 @@
 
 	} else if (!empty($_POST['snapshots'])) {
 		$files = array_reverse (preg_grep ('~^[0-9]*-.*\.(png)$~', scandir("./photos/")));
-		if (count($file) > 0)
-			echo json_encode(array_slice($files, $_POST['page'] * 5, $_POST['page'] * 5 + 5));
+		echo json_encode(array_slice($files, $_POST['page'] * 5, $_POST['page'] * 5 + 5));
 
 	} else if ($_POST['getSnapLikes'] && $_SESSION['logged_on_user']) {
     	$db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
