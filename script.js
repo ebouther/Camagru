@@ -159,6 +159,15 @@ function loadSnapshots(logged, page) {
 							snap_box.appendChild (like);
 						}
 
+						var url = window.location.href.split('?')[0];
+						var url_parent = url.substring( 0, url.lastIndexOf( "/" ) + 1);
+						var download = document.createElement('a');
+						download.innerHTML = "<button class=\"comment_btn\">Download</button>";
+						download.href = url_parent +  "/photos/" + snap;
+						download.setAttribute("download", "");
+
+						snap_box.appendChild (download);
+
 						document.getElementById('snapshots').appendChild(snap_box);
 
 					}) (snaps[key]);
