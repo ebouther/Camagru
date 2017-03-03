@@ -35,28 +35,30 @@
 	parse_str(parse_url($_POST['url'], PHP_URL_QUERY), $url_args);
 	if (!secure_pass($_POST['new_pass']))
 		echo "Password has to be at least 6 characters long and contain an uppercase, a lowercase and a number.";
-    try {
-        $db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = '
-          UPDATE
-                `camagru`.`users`
-		  SET
-		  		`users`.`passwd` = :hash
-		  WHERE
-				`users`.`reset_id` = :reset_id
-          ';
-          $query = $db->prepare($sql);
-		  $query->bindParam(':reset_id', $url_args['reset'], PDO::PARAM_STR);
-		  $query->bindParam(':hash', hash("whirlpool", $_POST['new_pass']), PDO::PARAM_STR);
-          $query->execute();
-		  if ($query->rowCount() > 0) {
-            echo 'Password successfully updated !';
-		  } else {
-            echo 'Error: bad id.';
-          }
-    } catch (PDOException $e) {
-        echo 'PDO error : ' . $e->getMessage();
-    }
+	else {
+		try {
+			$db = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
+			$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$sql = '
+			  UPDATE
+					`camagru`.`users`
+			  SET
+					`users`.`passwd` = :hash
+			  WHERE
+					`users`.`reset_id` = :reset_id
+			  ';
+			  $query = $db->prepare($sql);
+			  $query->bindParam(':reset_id', $url_args['reset'], PDO::PARAM_STR);
+			  $query->bindParam(':hash', hash("whirlpool", $_POST['new_pass']), PDO::PARAM_STR);
+			  $query->execute();
+			  if ($query->rowCount() > 0) {
+				echo 'Password successfully updated !';
+			  } else {
+				echo 'Error: bad id.';
+			  }
+		} catch (PDOException $e) {
+			echo 'PDO error : ' . $e->getMessage();
+		}
+	}
   }
  ?><script>setTimeout(function() {window.location.href = "./index.php";}, 3000);</script>
