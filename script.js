@@ -11,7 +11,7 @@ function previewFile() {
 	if (file) {
 			reader.readAsDataURL(file);
 	} else {
-			document.getElementById("video").style.background = "transparent url('img/mask.png') no-repeat 0 0";
+			//document.getElementById("video").style.background = "transparent url('img/mask.png') no-repeat 0 0";
 			document.getElementById("video").style.backgroundSize = "100% 100%";
 	}
 }
@@ -188,17 +188,17 @@ function loadUserSnaps() {
 			for (let key in snaps) {
 				(function () {
 					var snap_div = document.createElement('div');
-					
+
 					var new_snap = document.createElement('img');
 					new_snap.style = "width: 100%";
 					new_snap.src = "photos/" + snaps[key];
 					snap_div.appendChild(new_snap);
-					
+
 					var rm_button = document.createElement('button');
 					rm_button.innerHTML = "Remove";
 					rm_button.addEventListener("click", function(){removeSnap(snap_div, snaps[key])});
 					snap_div.appendChild (rm_button);
-					
+
 					document.getElementById('snapshots').appendChild(snap_div);
 				} ());
 			}
@@ -219,9 +219,9 @@ function useTemplate(template, id) {
 var current_page = 0;
 
 function loadPage(direction) {
-	
+
 	document.getElementById("snapshots").innerHTML = '';
-	
+
 	if (direction === "prev")
 	 {
 	 	loadSnapshots(true, current_page - 1 < 0 ? 0 : --current_page);
@@ -236,22 +236,22 @@ function sendSnap(data) {
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if (http.readyState == 4 && http.status == 200 && http.responseText !== "") {
-			
+
 			var snap_div = document.createElement('div');
-	
+
 			var new_snap = document.createElement('img');
 			new_snap.style = "width: 100%";
 			new_snap.src = http.responseText;
-			
+
 //			console.log("NEW SNAP: " + http.responseText);
-			
+
 			snap_div.appendChild(new_snap);
-			
+
 			var rm_button = document.createElement('button');
 			rm_button.innerHTML = "Remove";
 			rm_button.addEventListener("click", function(){removeSnap(snap_div, http.responseText.substr(9))});
 			snap_div.appendChild (rm_button);
-			
+
 			var snapshots = document.getElementById('snapshots');
 			snapshots.insertBefore(snap_div, snapshots.childNodes[0]);
 		}
@@ -282,7 +282,7 @@ function useCamera() {
 			if (!(selection.img === null || selection.img === undefined)) {
 				var canvas = document.querySelector('canvas');
 				var base_64;
-				
+
 				canvas.style.display = "none";
 				canvas.width = video.videoWidth;
 				canvas.height = video.videoHeight;
@@ -300,5 +300,3 @@ function useCamera() {
 		});
 	}, false);
 }
-
-

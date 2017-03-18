@@ -3,7 +3,10 @@
   	include './config/database.php';
     include './functions.php';
 
-	if ($_POST['img'] && $_POST['snap'] && $_SESSION['logged_on_user'])
+	if ($_POST['img']
+      && $_POST['snap']
+      && $_SESSION['logged_on_user']
+      && strlen($_POST['snap']) < 10000000)
 	{
 		$snap = base64_decode(explode(',', $_POST['snap'])[1]);
 		$fd = fopen("tmp.png" , 'w+b');
@@ -21,7 +24,7 @@
 		@imagecopyresized($dest, $src, 0, 0, 0, 0, $size[0], $size[1], $size2[0], $size2[1]);
 
 		$file =  time() . "-" . $_SESSION['logged_on_user'] . ".png";
-		
+
 		@imagepng($dest, "./photos/" . $file);
 
 		if (file_exists ("./photos/" . $file))
@@ -45,7 +48,8 @@
         	null;
     	}
 
-	} else if ($_POST['user_snaps'] && $_SESSION['logged_on_user']) {
+	} else if ($_POST['user_snaps']
+              && $_SESSION['logged_on_user']) {
 		if (!file_exists('./photos')) {
 			mkdir('./photos', 0777);
 		}
@@ -64,13 +68,13 @@
 		          WHERE
 		            `snaps`.`snap_file` = :snap
 		          ";
-		
+
 		        $query = $db->prepare($sql);
 		        $query->bindParam(':snap', $_POST['removeSnap'], PDO::PARAM_STR);
 		        $query->execute();
 		        if (file_exists('./photos/' . $_POST['removeSnap']))
 		        	unlink('./photos/' . $_POST['removeSnap']);
-		        
+
 		    } catch (PDOException $e) {
 		            echo 'Caught Exception : ' . $e->getMessage();
 		    }
